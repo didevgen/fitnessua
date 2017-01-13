@@ -3,13 +3,14 @@ package ua.malibu.ostpc.models.schedule;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.ScheduleStatus;
+import ua.malibu.ostpc.models.BaseEntity;
 import ua.malibu.ostpc.models.UUIDEntity;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class Schedule extends UUIDEntity {
+public class Schedule extends BaseEntity {
 
 //    @Column(name="start_date")
 //    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")

@@ -6,11 +6,12 @@ import java.util.Date;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.Roles;
+import ua.malibu.ostpc.models.BaseEntity;
 import ua.malibu.ostpc.models.UUIDEntity;
 
 @Entity
 @Table(name="users")
-public class User extends UUIDEntity {
+public class User extends BaseEntity {
 
     @Column(name="name", nullable=false)
     private String name;
