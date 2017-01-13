@@ -1,6 +1,7 @@
 package ua.malibu.ostpc.controllers;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.logging.Logger;
 
 @Transactional
