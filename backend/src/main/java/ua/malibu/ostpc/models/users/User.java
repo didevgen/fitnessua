@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     private String middleName;
 
     @Column(name="birthday")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime birthday;
 
     @Column(name="address")

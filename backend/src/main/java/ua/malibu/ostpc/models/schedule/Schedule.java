@@ -13,11 +13,11 @@ import java.util.Date;
 public class Schedule extends BaseEntity {
 
     @Column(name="start_date")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime startDate;
 
     @Column(name="end_date")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime endDate;
 
     @Column(name="status")

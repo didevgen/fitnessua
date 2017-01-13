@@ -13,9 +13,8 @@ public abstract class UUIDEntity  {
     @CloneIgnoreField
     private static final long serialVersionUID = -8466770986304062624L;
 
-    @Column(nullable = false, updatable = false, unique = true, columnDefinition = "uuid")
+    @Column(unique = true, nullable = false)
     @CloneIgnoreField
-    @org.hibernate.annotations.Type(type = "persistence.types.UUIDType")
     private String uuid = UUID.randomUUID().toString();
 
     public String getUuid() {
