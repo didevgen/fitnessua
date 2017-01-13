@@ -1,14 +1,15 @@
 package ua.malibu.ostpc.dtos;
 
-import ua.malibu.ostpc.models.ITransferable;
+import ua.malibu.ostpc.models.UUIDEntity;
 
-public class BaseUuidDTO implements IDto<BaseUuidDTO>{
+public class BaseUuidDTO implements IDto<UUIDEntity>{
 
     private String uuid;
 
     @Override
-    public BaseUuidDTO convert(ITransferable object) {
-        return null;
+    public BaseUuidDTO convert(UUIDEntity object) {
+        this.setUuid(object.getUuid());
+        return this;
     }
 
     public String getUuid() {
