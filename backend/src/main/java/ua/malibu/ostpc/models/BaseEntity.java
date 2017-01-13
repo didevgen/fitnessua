@@ -12,7 +12,7 @@ import java.io.Serializable;
     entities that inherit from it. A mapped superclass has no separate table defined for it.
 */
 @MappedSuperclass
-public abstract class BaseEntity extends UUIDEntity implements IIndexed, Serializable {
+public abstract class BaseEntity extends UUIDEntity implements IIndexed, Serializable, ITransferable {
 
     @CloneIgnoreField
     private static final long serialVersionUID = 2855346562216652344L;
