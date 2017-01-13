@@ -11,12 +11,14 @@ import java.util.Date;
 @Entity
 public class Schedule extends UUIDEntity {
 
-    @Column(name="start_date")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+//    @Column(name="start_date")
+//    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Transient
     private DateTime startDate;
 
-    @Column(name="end_date")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    /*@Column(name="end_date")
+    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")*/
+    @Transient
     private DateTime endDate;
 
     @Column(name="status")

@@ -21,8 +21,9 @@ public class User extends UUIDEntity {
     @Column(name="middle_name")
     private String middleName;
 
-    @Column(name="birthday")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+//    @Column(name="birthday")
+//    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    @Transient
     private DateTime birthday;
 
     @Column(name="address")
