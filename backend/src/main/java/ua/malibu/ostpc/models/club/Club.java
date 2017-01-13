@@ -1,11 +1,13 @@
-package ua.malibu.ostpc.models;
+package ua.malibu.ostpc.models.club;
+
+import ua.malibu.ostpc.models.UUIDEntity;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="Clubs")
+@Table(name="clubs")
 public class Club extends UUIDEntity {
-    @Column(name="Title")
+    @Column(name="title")
     private String title;
 
     public Club() {}

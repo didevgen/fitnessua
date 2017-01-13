@@ -1,38 +1,42 @@
-package ua.malibu.ostpc.models;
+package ua.malibu.ostpc.models.users;
 
 import javax.persistence.*;
 import java.util.Date;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.Roles;
+import ua.malibu.ostpc.models.UUIDEntity;
 
 @Entity
-@Table(name="Users")
+@Table(name="users")
 public class User extends UUIDEntity {
-    @Column(name="Name", nullable=false)
+
+    @Column(name="name", nullable=false)
     private String name;
 
-    @Column(name="Surname", nullable=false)
+    @Column(name="surname", nullable=false)
     private String surname;
 
-    @Column(name="MiddleName")
+    @Column(name="middle_name")
     private String middleName;
 
-    @Column(name="Birthday")
-    @Temporal(value=TemporalType.DATE)
-    private Date birthday;
+    @Column(name="birthday")
+    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
+    private DateTime birthday;
 
-    @Column(name="Address")
+    @Column(name="address")
     private String address;
 
-    @Column(name="Email")
+    @Column(name="email")
     private String email;
 
-    @Column(name="PhoneNumber")
+    @Column(name="phone_number")
     private String phoneNumber;
 
-    @Column(name="Role")
+    @Column(name="role")
     @Enumerated(EnumType.STRING)
     private Roles role;
-
 
     public User() {}
 
@@ -60,11 +64,11 @@ public class User extends UUIDEntity {
         this.middleName = middleName;
     }
 
-    public Date getBirthday() {
+    public DateTime getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(DateTime birthday) {
         this.birthday = birthday;
     }
 
