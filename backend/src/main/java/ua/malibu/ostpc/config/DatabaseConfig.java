@@ -12,6 +12,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -80,10 +81,12 @@ public class DatabaseConfig {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
-        jedisConFactory.setHostName("localhost");
-        jedisConFactory.setPort(6379);
-        return jedisConFactory;
+        JedisPoolConfig jedisConfig = new JedisPoolConfig();
+        jedisConfig.setMaxIdle(Integer.valueOf(env.getProperty("spring.redis.pool.max-idle")));
+        JedisConnectionFactory jedisFactory = new JedisConnectionFactory(jedisConfig);
+        jedisFactory.setHostName(env.getProperty("spring.redis.host"));
+        jedisFactory.setPort(Integer.valueOf(env.getProperty("spring.redis.port")));
+        return jedisFactory;
     }
 
     @Bean

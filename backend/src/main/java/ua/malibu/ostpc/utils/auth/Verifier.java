@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 public class Verifier {
     protected static final transient Logger logger = Logger.getLogger(Verifier.class.getName());
 
-    public static User VerifyCreds(_Login creds, EntityManager entityManager) {
+    public User VerifyCreds(_Login creds, EntityManager entityManager) {
         try {
             User user = new JPAQuery<User>(entityManager).from(QUser.user)
                     .where(QUser.user.login.eq(creds.getLogin())

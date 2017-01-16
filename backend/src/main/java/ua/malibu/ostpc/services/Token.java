@@ -4,6 +4,11 @@ public class Token {
     private String tokenValue;
     private String userUUID;
 
+    public Token(String tokenValue, String userUUID) {
+        this.tokenValue = tokenValue;
+        this.userUUID = userUUID;
+    }
+
     public String getTokenValue() {
         return tokenValue;
     }
