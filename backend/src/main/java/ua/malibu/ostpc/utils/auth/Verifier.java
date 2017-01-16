@@ -18,7 +18,7 @@ public class Verifier {
     public User VerifyCreds(_Login creds, EntityManager entityManager) {
         try {
             User user = new JPAQuery<User>(entityManager).from(QUser.user)
-                    .where(QUser.user.login.eq(creds.getLogin())
+                    .where(QUser.user.email.eq(creds.getLogin())
                             .and(QUser.user.password.eq(MD5.encrypt(creds.getPassword()))))
                     .fetchOne();
             if (user == null) {

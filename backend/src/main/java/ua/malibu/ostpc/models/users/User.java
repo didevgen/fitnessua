@@ -33,12 +33,16 @@ public class User extends BaseEntity {
     @Column(name="email")
     private String email;
 
+    @Column(name="password")
+    private String password;
+
     @Column(name="phone_number")
     private String phoneNumber;
 
     @Column(name="role")
     @Enumerated(EnumType.STRING)
     private Roles role;
+
 
     public User() {}
 
@@ -104,5 +108,13 @@ public class User extends BaseEntity {
 
     public void setRole(Roles role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
