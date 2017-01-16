@@ -1,6 +1,5 @@
 package ua.malibu.ostpc.models;
 
-import com.google.common.base.Objects;
 import ua.malibu.ostpc.models.annotations.CloneIgnoreField;
 
 import javax.persistence.Column;

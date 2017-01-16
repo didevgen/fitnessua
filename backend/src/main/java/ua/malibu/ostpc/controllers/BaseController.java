@@ -2,8 +2,8 @@ package ua.malibu.ostpc.controllers;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import java.util.logging.Logger;
+import org.springframework.transaction.annotation.Transactional;
+import org.apache.log4j.Logger;
 
 @Transactional
 public class BaseController {

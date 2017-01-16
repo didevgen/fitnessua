@@ -1,14 +1,11 @@
 package ua.malibu.ostpc.controllers.test;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.malibu.ostpc.controllers.BaseController;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
