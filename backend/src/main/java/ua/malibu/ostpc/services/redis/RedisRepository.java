@@ -6,19 +6,17 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 @Repository
 @Transactional
 public class RedisRepository implements IRedisRepository<String, String> {
-    private StringRedisTemplate redisTemplate;
-    private ValueOperations<String, String> valueOps;
-
     @Autowired
-    public RedisRepository(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-        valueOps = this.redisTemplate.opsForValue();
-    }
+    private StringRedisTemplate redisTemplate;
+
+    @Resource(name="redisTemplate")
+    private ValueOperations<String, String> valueOps;
 
     @Override
     public void insert(String key, String value) {

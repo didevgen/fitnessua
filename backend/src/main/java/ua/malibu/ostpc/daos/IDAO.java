@@ -1,5 +1,8 @@
 package ua.malibu.ostpc.daos;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface IDAO<T> {
     void insert(T t);
     void update (T t);

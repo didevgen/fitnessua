@@ -1,19 +1,20 @@
 package ua.malibu.ostpc.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 import ua.malibu.ostpc.dtos.auth._Login;
-import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.users.User;
+import ua.malibu.ostpc.services.UserService;
+import ua.malibu.ostpc.utils.MD5;
+import ua.malibu.ostpc.utils.auth.Fetcher;
 import ua.malibu.ostpc.utils.auth.TokenGenerator;
-import ua.malibu.ostpc.utils.auth.Verifier;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 @RestController
@@ -21,18 +22,28 @@ import org.apache.log4j.Logger;
 public class LoginController {
     protected static final transient Logger logger = Logger.getLogger(LoginController.class.getName());
 
-    private Verifier verifier = new Verifier();
-    private TokenGenerator tokenGenerator;  //Warning! Not initialized!
+    private Fetcher fetcher = new Fetcher();
+    @Autowired
+    private TokenGenerator tokenGenerator;
+    @Autowired
+    UserService userService;
     @PersistenceContext
     protected EntityManager entityManager;
 
-    @RequestMapping("/")
-    public ResponseEntity login (@RequestBody _Login login, HttpServletResponse resp) throws RestException {
-        User user = verifier.VerifyCreds(login, entityManager);
-        String token = tokenGenerator.issueToken(user.getUuid());
+    @RequestMapping(value="/login", method=RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity login (@RequestBody _Login login) throws Exception {
+        User user = new User();
+        user.setSurname("petrov");
+        user.setName("anton");
+        user.setPassword(MD5.encrypt("123456"));
+        user.setEmail("qwerty");
+        userService.saveUser(user);
+        User user1 = fetcher.FetchUser(login, entityManager);
+        String token = tokenGenerator.issueToken(user1.getUuid());
         HttpHeaders headers = new HttpHeaders();
+        System.out.println(token);
         headers.set("token value ", token);
-        return new ResponseEntity<>(user, headers, HttpStatus.OK);
+        return new ResponseEntity<>(user1, headers, HttpStatus.OK);
     }
 
 }
