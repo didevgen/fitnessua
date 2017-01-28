@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.security.core.Authentication;
 import ua.malibu.ostpc.enums.Roles;
 import ua.malibu.ostpc.models.BaseEntity;
 import ua.malibu.ostpc.models.UUIDEntity;
@@ -117,4 +118,6 @@ public class User extends BaseEntity {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

@@ -24,5 +24,6 @@ public class Token {
     public void setUserUUID(String userUUID) {
         this.userUUID = userUUID;
     }
+
 }
 

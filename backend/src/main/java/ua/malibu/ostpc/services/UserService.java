@@ -14,8 +14,8 @@ public class UserService {
         userDao.insert(user);
     }
 
-    public void getUser(String uuid) {
-        userDao.get(uuid);
+    public User getUser(String uuid) {
+        return userDao.get(uuid);
     }
 
     public void deleteUser(User user) {

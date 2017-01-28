@@ -32,17 +32,11 @@ public class LoginController {
 
     @RequestMapping(value="/login", method=RequestMethod.POST, consumes = "application/json")
     public ResponseEntity login (@RequestBody _Login login) throws Exception {
-        User user = new User();
-        user.setSurname("petrov");
-        user.setName("anton");
-        user.setPassword(MD5.encrypt("123456"));
-        user.setEmail("qwerty");
-        userService.saveUser(user);
         User user1 = fetcher.FetchUser(login, entityManager);
         String token = tokenGenerator.issueToken(user1.getUuid());
         HttpHeaders headers = new HttpHeaders();
         System.out.println(token);
-        headers.set("token value ", token);
+        headers.set("token", token);
         return new ResponseEntity<>(user1, headers, HttpStatus.OK);
     }
 
