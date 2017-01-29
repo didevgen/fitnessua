@@ -4,10 +4,13 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.ScheduleStatus;
 import ua.malibu.ostpc.models.BaseEntity;
+import ua.malibu.ostpc.models.users.User;
+import ua.malibu.ostpc.models.workday.Workday;
 import ua.malibu.ostpc.models.UUIDEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Schedule extends BaseEntity {
@@ -25,6 +28,10 @@ public class Schedule extends BaseEntity {
     @Column(name="status")
     @Enumerated(EnumType.STRING)
     private ScheduleStatus status;
+
+    private List<Workday> workdayList;
+
+    private List<User> userList;
 
     public Schedule() {}
 
@@ -50,5 +57,21 @@ public class Schedule extends BaseEntity {
 
     public void setStatus(ScheduleStatus status) {
         this.status = status;
+    }
+
+    public List<Workday> getWorkdayList() {
+        return workdayList;
+    }
+
+    public void setWorkdayList(List<Workday> workdayList) {
+        this.workdayList = workdayList;
+    }
+
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
     }
 }
