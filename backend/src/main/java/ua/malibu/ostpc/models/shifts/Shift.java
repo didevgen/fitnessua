@@ -4,19 +4,31 @@ import ua.malibu.ostpc.models.BaseEntity;
 import ua.malibu.ostpc.models.users.User;
 import ua.malibu.ostpc.models.workday.Workday;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "shifts")
 public class Shift extends BaseEntity {
 
+    @ManyToOne
+    @JoinColumn(name = "workday_id")
     private Workday workingDay;
 
-    private Byte shiftOrdinal;
+    @Column(name = "shift_ordinal")
+    private Integer shiftOrdinal;
 
-    private User wokerOnShift;
+    @ManyToMany
+    @JoinTable(name = "users_shifts",
+               joinColumns = @JoinColumn(name = "shift_id"),
+               inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> workersOnShift;
 
-    public byte getShiftOrdinal() {
+    public int getShiftOrdinal() {
         return shiftOrdinal;
     }
 
-    public void setShiftOrdinal(byte shiftOrdinal) {
+    public void setShiftOrdinal(int shiftOrdinal) {
         this.shiftOrdinal = shiftOrdinal;
     }
 
@@ -28,11 +40,11 @@ public class Shift extends BaseEntity {
         this.workingDay = workingDay;
     }
 
-    public User getWokerOnShift() {
-        return wokerOnShift;
+    public List<User> getWokerOnShift() {
+        return workersOnShift;
     }
 
-    public void setWokerOnShift(User wokerOnShift) {
-        this.wokerOnShift = wokerOnShift;
+    public void setWokerOnShift(List<User> wokerOnShift) {
+        this.workersOnShift = wokerOnShift;
     }
 }

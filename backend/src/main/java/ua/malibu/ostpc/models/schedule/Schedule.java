@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 public class Schedule extends BaseEntity {
 
-//    @Column(name="start_date")
+    //    @Column(name="start_date")
 //    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
     @Transient
     private DateTime startDate;
@@ -25,15 +25,15 @@ public class Schedule extends BaseEntity {
     @Transient
     private DateTime endDate;
 
-    @Column(name="status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ScheduleStatus status;
 
+    @OneToMany(mappedBy = "schedule")
     private List<Workday> workdayList;
 
-    private List<User> userList;
-
-    public Schedule() {}
+    public Schedule() {
+    }
 
     public DateTime getStartDate() {
         return startDate;
@@ -67,11 +67,4 @@ public class Schedule extends BaseEntity {
         this.workdayList = workdayList;
     }
 
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
-    }
 }

@@ -2,12 +2,14 @@ package ua.malibu.ostpc.models.users;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.Roles;
 import ua.malibu.ostpc.models.BaseEntity;
 import ua.malibu.ostpc.models.UUIDEntity;
+import ua.malibu.ostpc.models.shifts.Shift;
 
 @Entity
 @Table(name="users")
@@ -39,6 +41,12 @@ public class User extends BaseEntity {
     @Column(name="role")
     @Enumerated(EnumType.STRING)
     private Roles role;
+
+    @ManyToMany
+    @JoinTable(name = "users_shifts",
+               joinColumns = @JoinColumn(name = "user_id"),
+               inverseJoinColumns = @JoinColumn(name = "shift_id"))
+    private List<Shift> shifts;
 
     public User() {}
 

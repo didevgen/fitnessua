@@ -2,33 +2,44 @@ package ua.malibu.ostpc.models.workday;
 
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.models.BaseEntity;
+import ua.malibu.ostpc.models.club.Club;
+import ua.malibu.ostpc.models.schedule.Schedule;
 import ua.malibu.ostpc.models.shifts.Shift;
+
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
 public class Workday extends BaseEntity {
 
-    private Long clubID;
+    @ManyToOne
+    @JoinColumn(name = "club_id")
+    private Club club;
 
-    private Long scheduleID;
+    @ManyToOne
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
 
+    @Column(name = "date")
     private DateTime date;
 
+    @OneToMany(mappedBy = "workingDay")
     private List<Shift> shiftList;
 
-    public Long getClubID() {
-        return clubID;
+    public Club getClubID() {
+        return club;
     }
 
-    public void setClubID(Long clubID) {
-        this.clubID = clubID;
+    public void setClubID(Club club) {
+        this.club = club;
     }
 
-    public Long getScheduleID() {
-        return scheduleID;
+    public Schedule getSchedule() {
+        return schedule;
     }
 
-    public void setScheduleID(Long scheduleID) {
-        this.scheduleID = scheduleID;
+    public void setScheduleID(Schedule schedule) {
+        this.schedule = schedule;
     }
 
     public DateTime getDate() {
