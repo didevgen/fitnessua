@@ -58,6 +58,7 @@ public class DatabaseConfig {
                 "hibernate.hbm2ddl.auto",
                 env.getProperty("hibernate.hbm2ddl.auto"));
         entityManagerFactory.setJpaProperties(additionalProperties);
+        entityManagerFactory.getJpaPropertyMap().put("jadira.usertype.autoRegisterUserTypes", "true");
         return entityManagerFactory;
     }
 

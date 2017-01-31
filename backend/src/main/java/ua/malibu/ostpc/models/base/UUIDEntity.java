@@ -1,4 +1,4 @@
-package ua.malibu.ostpc.models;
+package ua.malibu.ostpc.models.base;
 
 import com.google.common.base.Objects;
 import ua.malibu.ostpc.models.annotations.CloneIgnoreField;

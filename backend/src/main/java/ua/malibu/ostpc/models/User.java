@@ -1,15 +1,12 @@
-package ua.malibu.ostpc.models.users;
+package ua.malibu.ostpc.models;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.Roles;
-import ua.malibu.ostpc.models.BaseEntity;
-import ua.malibu.ostpc.models.UUIDEntity;
-import ua.malibu.ostpc.models.shifts.Shift;
+import ua.malibu.ostpc.models.base.BaseEntity;
 
 @Entity
 @Table(name="users")
@@ -24,9 +21,8 @@ public class User extends BaseEntity {
     @Column(name="middle_name")
     private String middleName;
 
-//    @Column(name="birthday")
-//    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
-    @Transient
+    @Column
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime birthday;
 
     @Column(name="address")
@@ -112,5 +108,13 @@ public class User extends BaseEntity {
 
     public void setRole(Roles role) {
         this.role = role;
+    }
+
+    public List<Shift> getShifts() {
+        return shifts;
+    }
+
+    public void setShifts(List<Shift> shifts) {
+        this.shifts = shifts;
     }
 }

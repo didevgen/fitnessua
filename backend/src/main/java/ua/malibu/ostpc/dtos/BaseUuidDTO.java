@@ -1,6 +1,6 @@
 package ua.malibu.ostpc.dtos;
 
-import ua.malibu.ostpc.models.UUIDEntity;
+import ua.malibu.ostpc.models.base.UUIDEntity;
 
 public class BaseUuidDTO implements IDto<UUIDEntity>{
 

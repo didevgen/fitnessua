@@ -1,5 +1,5 @@
 package ua.malibu.ostpc.enums;
 
 public enum ScheduleStatus {
-    CURRENT, PAST, SUPPOSED;
+    CURRENT, PAST, SUPPOSED, DRAFT;
 }

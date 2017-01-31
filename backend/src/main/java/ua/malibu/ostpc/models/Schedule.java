@@ -1,28 +1,23 @@
-package ua.malibu.ostpc.models.schedule;
+package ua.malibu.ostpc.models;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.ScheduleStatus;
-import ua.malibu.ostpc.models.BaseEntity;
-import ua.malibu.ostpc.models.users.User;
-import ua.malibu.ostpc.models.workday.Workday;
-import ua.malibu.ostpc.models.UUIDEntity;
+import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name="schedules")
 public class Schedule extends BaseEntity {
 
-    //    @Column(name="start_date")
-//    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")
-    @Transient
+    @Column
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime startDate;
 
-    /*@Column(name="end_date")
-    @Type(type="org.joda.time.contrib.hibernate.PersistentDateTime")*/
-    @Transient
+    @Column
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime endDate;
 
     @Column(name = "status")
@@ -30,7 +25,7 @@ public class Schedule extends BaseEntity {
     private ScheduleStatus status;
 
     @OneToMany(mappedBy = "schedule")
-    private List<Workday> workdayList;
+    private List<WorkDay> workingDays;
 
     public Schedule() {
     }
@@ -59,12 +54,11 @@ public class Schedule extends BaseEntity {
         this.status = status;
     }
 
-    public List<Workday> getWorkdayList() {
-        return workdayList;
+    public List<WorkDay> getWorkingDays() {
+        return workingDays;
     }
 
-    public void setWorkdayList(List<Workday> workdayList) {
-        this.workdayList = workdayList;
+    public void setWorkingDays(List<WorkDay> workingDays) {
+        this.workingDays = workingDays;
     }
-
 }

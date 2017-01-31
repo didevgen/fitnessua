@@ -3,8 +3,7 @@ package ua.malibu.ostpc.daos;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ua.malibu.ostpc.models.users.QUser;
-import ua.malibu.ostpc.models.users.User;
+import ua.malibu.ostpc.models.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,13 +30,11 @@ public class UserDAO implements IDAO<User>{
         entityManager.detach(user);
     }
 
+    //TODO further implementation
     @Override
     public User get(String uuid) {
-        return new JPAQuery<User>(entityManager).from(QUser.user).where(QUser.user.uuid.eq(uuid)).fetchOne();
+        return null;
     }
-
-
-
 
     public EntityManager getEntityManager() {
         return entityManager;
