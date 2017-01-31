@@ -1,15 +1,17 @@
 package ua.malibu.ostpc.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import redis.clients.jedis.JedisPoolConfig;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -77,6 +79,21 @@ public class DatabaseConfig {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
+    @Bean
+    JedisConnectionFactory jedisConnectionFactory() {
+        JedisPoolConfig jedisConfig = new JedisPoolConfig();
+        jedisConfig.setMaxIdle(Integer.valueOf(env.getProperty("spring.redis.pool.max-idle")));
+        JedisConnectionFactory jedisFactory = new JedisConnectionFactory(jedisConfig);
+        jedisFactory.setHostName(env.getProperty("spring.redis.host"));
+        jedisFactory.setPort(Integer.valueOf(env.getProperty("spring.redis.port")));
+        return jedisFactory;
+    }
 
+    @Bean
+    public StringRedisTemplate redisTemplate() {
+        StringRedisTemplate template = new StringRedisTemplate(jedisConnectionFactory());
+        template.setEnableTransactionSupport(true);
+        return template;
+    }
 
 }

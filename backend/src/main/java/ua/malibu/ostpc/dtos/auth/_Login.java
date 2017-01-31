@@ -1,8 +1,5 @@
 package ua.malibu.ostpc.dtos.auth;
 
-/**
- * Created by Eugne on 27.12.2016.
- */
 public class _Login {
     private String login;
     private String password;

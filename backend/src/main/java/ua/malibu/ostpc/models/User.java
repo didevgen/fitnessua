@@ -5,46 +5,51 @@ import java.util.List;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.security.core.Authentication;
 import ua.malibu.ostpc.enums.Roles;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User extends BaseEntity {
 
-    @Column(name="name", nullable=false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name="surname", nullable=false)
+    @Column(name = "surname", nullable = false)
     private String surname;
 
-    @Column(name="middle_name")
+    @Column(name = "middle_name")
     private String middleName;
 
     @Column
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime birthday;
 
-    @Column(name="address")
+    @Column(name = "address")
     private String address;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
-    @Column(name="phone_number")
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name="role")
+    @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Roles role;
 
     @ManyToMany
     @JoinTable(name = "users_shifts",
-               joinColumns = @JoinColumn(name = "user_id"),
-               inverseJoinColumns = @JoinColumn(name = "shift_id"))
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "shift_id"))
     private List<Shift> shifts;
 
-    public User() {}
+    public User() {
+    }
 
     public String getName() {
         return name;
@@ -117,4 +122,14 @@ public class User extends BaseEntity {
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 }

@@ -3,9 +3,6 @@ package ua.malibu.ostpc.utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by Eugne on 27.12.2016.
- */
 public class MD5 {
     public static String encrypt(String message) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
