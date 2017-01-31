@@ -32,10 +32,10 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("db.driver"));
-        dataSource.setUrl(env.getProperty("db.url"));
-        dataSource.setUsername(env.getProperty("db.username"));
-        dataSource.setPassword(env.getProperty("db.password"));
+        dataSource.setDriverClassName(env.getProperty("spring.database.driver-class-name"));
+        dataSource.setUrl(env.getProperty("spring.datasource.url"));
+        dataSource.setUsername(env.getProperty("spring.datasource.username"));
+        dataSource.setPassword(env.getProperty("spring.datasource.password"));
         return dataSource;
     }
 
@@ -52,13 +52,13 @@ public class DatabaseConfig {
         Properties additionalProperties = new Properties();
         additionalProperties.put(
                 "hibernate.dialect",
-                env.getProperty("hibernate.dialect"));
+                env.getProperty("spring.jpa.database-platform"));
         additionalProperties.put(
                 "hibernate.show_sql",
-                env.getProperty("hibernate.show_sql"));
+                env.getProperty("spring.jpa.show-sql"));
         additionalProperties.put(
                 "hibernate.hbm2ddl.auto",
-                env.getProperty("hibernate.hbm2ddl.auto"));
+                env.getProperty("spring.jpa.hibernate.ddl-auto"));
         entityManagerFactory.setJpaProperties(additionalProperties);
         entityManagerFactory.getJpaPropertyMap().put("jadira.usertype.autoRegisterUserTypes", "true");
         return entityManagerFactory;
