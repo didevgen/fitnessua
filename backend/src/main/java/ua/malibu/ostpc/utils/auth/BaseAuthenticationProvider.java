@@ -28,7 +28,6 @@ public class BaseAuthenticationProvider implements AuthenticationProvider {
             logger.info("User with uuid " + loginToken.getPrincipal() + " was not found.");
             throw new RestException(HttpStatus.NOT_FOUND, 40004, "User " + loginToken.getPrincipal() + " not found.");
         }
-        loginToken.setAuthenticatedUser(user);
         return loginToken;
     }
 

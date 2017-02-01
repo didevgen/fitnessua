@@ -6,16 +6,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import ua.malibu.ostpc.dtos.auth._Login;
+import org.springframework.web.bind.annotation.*;
+import ua.malibu.ostpc.exceptions.rest.RestException;
+import ua.malibu.ostpc.models.User;
 import ua.malibu.ostpc.services.UserService;
+import ua.malibu.ostpc.services.redis.RedisRepository;
+import ua.malibu.ostpc.utils.MD5;
 import ua.malibu.ostpc.utils.auth.TokenGenerator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @RestController
@@ -26,16 +25,23 @@ public class LoginController {
     @Autowired
     private TokenGenerator tokenGenerator;
     @Autowired
-    UserService userService;
-    @PersistenceContext
-    protected EntityManager entityManager;
+    private UserService userService;
 
     @RequestMapping(value="/login", method=RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity login (@RequestBody _Login login) throws Exception {
-        String token = tokenGenerator.issueToken(UUID.randomUUID().toString());
+    public ResponseEntity login (HttpServletRequest req) throws Exception {
+        String email = (String)req.getAttribute("login");
+        User user = userService.getUser(email);
+        if (user == null) {
+            throw new RestException(HttpStatus.NOT_FOUND, 40001, "User with email " +
+                    email + " was not found!");
+        } else if (!MD5.encrypt((String)req.getAttribute("password")).equals(user.getPassword())) {
+            throw new RestException(HttpStatus.UNAUTHORIZED, 40003, "Bad credentials!");
+        }
+        String token = tokenGenerator.issueToken(user.getUuid());
         HttpHeaders headers = new HttpHeaders();
         headers.set("token", token);
-        return new ResponseEntity<>(headers, HttpStatus.OK);
+        System.out.println(token);
+        return new ResponseEntity<>(user, headers, HttpStatus.OK);
     }
 
 }

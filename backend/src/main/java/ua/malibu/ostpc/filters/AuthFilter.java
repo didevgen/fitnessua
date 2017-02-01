@@ -27,13 +27,20 @@ public class AuthFilter extends OncePerRequestFilter {
         String uuid = redisRepository.get(curToken);
         if (uuid == null) {
             logger.info("Token " + curToken + " has expired");
-            throw new RestException(HttpStatus.UNAUTHORIZED, 40001, "Check credentials!");
+            throw new RestException(HttpStatus.UNAUTHORIZED, 40001, "Token not found!");
         } else {
             redisRepository.refreshExpirationTime(curToken);
             Authentication auth = new LoginToken(uuid);
             SecurityContextHolder.getContext().setAuthentication(auth);
-
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
+    }
+
+    public RedisRepository getRedisRepository() {
+        return redisRepository;
+    }
+
+    public void setRedisRepository(RedisRepository redisRepository) {
+        this.redisRepository = redisRepository;
     }
 }

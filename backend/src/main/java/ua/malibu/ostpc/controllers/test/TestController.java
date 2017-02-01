@@ -9,7 +9,7 @@ import ua.malibu.ostpc.exceptions.rest.RestException;
 import java.io.IOException;
 
 @RestController
-public class TestController extends BaseController {
+public class TestController {
 
     @RequestMapping(value = "/test")
     @ResponseBody

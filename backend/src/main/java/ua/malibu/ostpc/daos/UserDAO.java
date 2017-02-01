@@ -1,10 +1,6 @@
 package ua.malibu.ostpc.daos;
 
-import com.querydsl.jpa.impl.JPAQuery;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.malibu.ostpc.models.User;
 
@@ -33,10 +29,11 @@ public class UserDAO implements IDAO<User>{
         entityManager.detach(user);
     }
 
-    //TODO further implementation
     @Override
-    public User get(String uuid) {
-        return null;
+    public User get(String email) {
+        return (User)entityManager.createNativeQuery("Select * from QUser where email={id}")
+                     .setParameter("id", email)
+                     .getSingleResult();
     }
 
     public EntityManager getEntityManager() {

@@ -8,7 +8,6 @@ import java.util.Collections;
 public class LoginToken extends AbstractAuthenticationToken {
     private String login;
     private String password;
-    private User authenticatedUser;
 
     public LoginToken(String uuid) {
         super(Collections.EMPTY_LIST);
@@ -23,13 +22,5 @@ public class LoginToken extends AbstractAuthenticationToken {
     @Override
     public Object getCredentials() {
         return password;
-    }
-
-    public User getAuthenticatedUser() {
-        return authenticatedUser;
-    }
-
-    public void setAuthenticatedUser(User authenticatedUser) {
-        this.authenticatedUser = authenticatedUser;
     }
 }
