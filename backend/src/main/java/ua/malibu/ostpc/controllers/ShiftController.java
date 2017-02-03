@@ -26,10 +26,17 @@ public class ShiftController extends BaseController
     @ResponseBody
     public ResponseEntity<ShiftDTO> getShift(@PathVariable (name = "uuid", required = true) String uuid)
     {
+        /**
+         * You already have ShiftDAO. Please autowire (see @Autowired) ShiftDAO to the controller
+         */
          Shift shift = new JPAQuery<Shift>(entityManager)
                  .from(QShift.shift)
                  .where(QShift.shift.uuid.eq(uuid))
                  .fetchOne();
+        /**
+         * Don't create a new variable
+         * you can do this by new ShiftDTO().convert(shift)
+         */
          ShiftDTO shiftDTO = new ShiftDTO();
         return new ResponseEntity<ShiftDTO>(shiftDTO.convert(shift), HttpStatus.OK);
     }
@@ -38,14 +45,28 @@ public class ShiftController extends BaseController
     @ResponseBody
     public ResponseEntity<Boolean> deleteShift(@PathVariable (name = "uuid", required = true) String uuid)
     {
+        /**
+         * Please, read about @Transactional interface
+         * I suppose, that JPADeleteClause will not do rollback
+         * Maybe it would be better to find entity and then remove it
+         * by using entityManager (see EntityManager API docs)
+         */
         new JPADeleteClause(entityManager, QShift.shift)
                 .where (QShift.shift.uuid.eq(uuid))
                 .execute();
+        /**
+         * Why do you return true?
+         * What will you do, when the specified shift is not found
+         * Or you have faced the delete constraint???
+         */
     return new ResponseEntity<>(Boolean.TRUE, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/shift/{uuid}", method = RequestMethod.PUT)
     @ResponseBody
+    //Name as updateShift
+    //Request body must be DTO instance not this
+    // Like @RequestBody ShiftDTO shift (or some another class)
     public ResponseEntity<ShiftDTO> putShift (@PathVariable (name = "uuid") String uuid,
                                        @RequestBody Long id,
                                        WorkDay workingDay,
@@ -61,6 +82,7 @@ public class ShiftController extends BaseController
             shift.setWorkersOnShift(workersOnShift);
             shift.setWorkingDay(workingDay);
             shift.setId(id);
+            //you can use JPA#em.merge instead
             new JPAUpdateClause(entityManager, QShift.shift)
                     .where(QShift.shift.uuid.eq(uuid))
                     .set(QShift.shift, shift)
@@ -69,6 +91,7 @@ public class ShiftController extends BaseController
             return new ResponseEntity<ShiftDTO>(shiftDTO.convert(shift), HttpStatus.OK);
         }
         else {
+            //see testController and do throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -76,6 +99,8 @@ public class ShiftController extends BaseController
 
     @RequestMapping(value = "/shift/{uuid}", method = RequestMethod.POST)
     @ResponseBody
+    //createShift
+    //the same about RequestBody
     public ResponseEntity<ShiftDTO> postShift (@PathVariable (name = "uuid") String uuid,
                                         @RequestBody Long id,
                                         WorkDay workingDay,
@@ -93,13 +118,17 @@ public class ShiftController extends BaseController
             shift.setWorkersOnShift(workersOnShift);
             shift.setWorkingDay(workingDay);
             shift.setId(id);
+            //use JPA#em.persist
+            //And when you are making a new instance it must not be Update statement :)
             new JPAUpdateClause(entityManager, QShift.shift)
                     .set(QShift.shift, shift)
                     .execute();
             ShiftDTO shiftDTO = new ShiftDTO();
+            //use just 200 - OK
             return new ResponseEntity<ShiftDTO>(shiftDTO.convert(shift), HttpStatus.CREATED);
         }
         else {
+            //throw new
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }

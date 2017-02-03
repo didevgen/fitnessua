@@ -11,8 +11,26 @@ import java.util.List;
  */
 
 public class ShiftDTO  implements IDto<Shift> {
+    /**
+     *     Complex entity is not good for DTO
+     *     The main problem you will have circular reference error
+     *     while transfering to JSON
+     *     You can do in a such way
+     *     private String workingDayUuid;
+     *
+     *     or
+     *
+     *     private WorkingDayDTO workingDay
+     */
     private WorkDay workingDay;
     private Integer shiftOrdinal;
+
+    /**
+     * Same shit :)
+     * Use List<String> users
+     *
+     * or List<UserDTO> users
+     */
     private List<User> workersOnShift;
 
     public WorkDay getWorkingDay() {
