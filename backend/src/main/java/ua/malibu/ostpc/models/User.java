@@ -30,10 +30,10 @@ public class User extends BaseEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "phone_number")
