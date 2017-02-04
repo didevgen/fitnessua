@@ -1,7 +1,9 @@
 package ua.malibu.ostpc.daos;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ua.malibu.ostpc.models.QUser;
 import ua.malibu.ostpc.models.User;
 
 import javax.persistence.EntityManager;
@@ -30,10 +32,19 @@ public class UserDAO implements IDAO<User>{
     }
 
     @Override
-    public User get(String email) {
-        return (User)entityManager.createNativeQuery("Select * from QUser where email={id}")
-                     .setParameter("id", email)
-                     .getSingleResult();
+    public User getByEmail(String email) {
+        return new JPAQuery<User>(entityManager)
+                .from(QUser.user)
+                .where(QUser.user.email.eq(email))
+                .fetchOne();
+    }
+
+    @Override
+    public User getById(String uuid) {
+        return new JPAQuery<User>(entityManager)
+                .from(QUser.user)
+                .where(QUser.user.uuid.eq(uuid))
+                .fetchOne();
     }
 
     public EntityManager getEntityManager() {

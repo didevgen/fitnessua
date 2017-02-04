@@ -14,8 +14,12 @@ public class UserService {
         userDao.insert(user);
     }
 
-    public User getUser(String email) {
-        return userDao.get(email);
+    public User getUserByEmail(String email) {
+        return userDao.getByEmail(email);
+    }
+
+    public User getUserById(String uuid) {
+        return userDao.getById(uuid);
     }
 
     public void deleteUser(User user) {

@@ -3,44 +3,41 @@ package ua.malibu.ostpc.filters;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 import ua.malibu.ostpc.exceptions.rest.RestException;
-import ua.malibu.ostpc.services.redis.RedisRepository;
-import ua.malibu.ostpc.utils.auth.LoginToken;
+import ua.malibu.ostpc.services.redis.IRedisRepository;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-public class AuthFilter extends OncePerRequestFilter {
+@Component
+public class AuthFilter extends GenericFilterBean{
     private static final Logger logger = Logger.getLogger(AuthFilter.class);
 
     @Autowired
-    private RedisRepository redisRepository;
+    private IRedisRepository<String, String> redisRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String curToken = httpServletRequest.getHeader("token");
+    public void doFilter(ServletRequest httpServletRequest, ServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+        String curToken = ((HttpServletRequest)httpServletRequest).getHeader("x-auth-token");
         String uuid = redisRepository.get(curToken);
         if (uuid == null) {
             logger.info("Token " + curToken + " has expired");
             throw new RestException(HttpStatus.UNAUTHORIZED, 40001, "Token not found!");
         } else {
             redisRepository.refreshExpirationTime(curToken);
-            Authentication auth = new LoginToken(uuid);
-            SecurityContextHolder.getContext().setAuthentication(auth);
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
 
-    public RedisRepository getRedisRepository() {
+    public IRedisRepository getIRedisRepository() {
         return redisRepository;
     }
 
-    public void setRedisRepository(RedisRepository redisRepository) {
+    public void setIRedisRepository(IRedisRepository redisRepository) {
         this.redisRepository = redisRepository;
     }
 }

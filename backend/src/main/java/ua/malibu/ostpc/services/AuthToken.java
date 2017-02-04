@@ -1,10 +1,10 @@
 package ua.malibu.ostpc.services;
 
-public class Token {
+public class AuthToken {
     private String tokenValue;
     private String userUUID;
 
-    public Token(String tokenValue, String userUUID) {
+    public AuthToken(String tokenValue, String userUUID) {
         this.tokenValue = tokenValue;
         this.userUUID = userUUID;
     }
@@ -13,17 +13,8 @@ public class Token {
         return tokenValue;
     }
 
-    public void setTokenValue(String tokenValue) {
-        this.tokenValue = tokenValue;
-    }
-
     public String getUserUUID() {
         return userUUID;
     }
-
-    public void setUserUUID(String userUUID) {
-        this.userUUID = userUUID;
-    }
-
 }
 

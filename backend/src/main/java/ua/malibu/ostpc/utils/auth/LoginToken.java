@@ -1,26 +1,26 @@
 package ua.malibu.ostpc.utils.auth;
 
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import ua.malibu.ostpc.models.User;
+import ua.malibu.ostpc.services.AuthToken;
 
 import java.util.Collections;
 
-public class LoginToken extends AbstractAuthenticationToken {
-    private String login;
-    private String password;
+public class LoginToken extends UsernamePasswordAuthenticationToken {
+    private User authenticatedUser;
+    private AuthToken authToken;
 
-    public LoginToken(String uuid) {
-        super(Collections.EMPTY_LIST);
-        this.login = uuid;
+    public LoginToken(String login, String pass, AuthToken token, User user) {
+        super(login, pass, Collections.EMPTY_LIST);
+        this.authToken = token;
+        this.authenticatedUser = user;
     }
 
-    @Override
-    public Object getPrincipal() {
-        return login;
+    public AuthToken getAuthToken() {
+        return authToken;
     }
 
-    @Override
-    public Object getCredentials() {
-        return password;
+    public User getAuthenticatedUser() {
+        return authenticatedUser;
     }
 }
