@@ -14,36 +14,12 @@ import javax.persistence.PersistenceContext;
  */
 @Repository("shiftDao")
 @Transactional
-public class ShiftDAO implements IDAO<Shift> {
+public class ShiftDAO extends BaseDAO<Shift> {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Override
-    public void insert(Shift shift) {
-        entityManager.persist(shift);
-    }
-
-    @Override
-    public void update(Shift shift) {
-        entityManager.merge(shift);
-    }
-
-    @Override
-    public void delete(Shift shift) {
-        entityManager.detach(shift);
-    }
 
     @Override
     public Shift get(String uuid) {
         return new JPAQuery<Shift>(entityManager).from(QShift.shift).where(QShift.shift.uuid.eq(uuid)).fetchOne();
     }
 
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 }
