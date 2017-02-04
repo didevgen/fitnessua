@@ -18,6 +18,7 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserDAO userDAO;
+
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<SimpleUserDTO> readUser(@PathVariable(name = "uuid", required = true) String uuid) {
@@ -63,27 +64,20 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<FullUserDTO> createUser(@PathVariable(name = "uuid", required = true) String uuid,
-                                                  @RequestBody FullUserDTO fullUser) {
-        User user = userDAO.get(uuid);
-        if (user == null) {
-            user.setName(fullUser.getName());
-            user.setSurname(fullUser.getSurname());
-            user.setMiddleName(fullUser.getMiddleName());
-            user.setBirthday(fullUser.getBirthday());
-            user.setAddress(fullUser.getAddress());
-            user.setEmail(fullUser.getEmail());
-            user.setPhoneNumber(fullUser.getPhoneNumber());
-            user.setRole(fullUser.getRole());
-            user.setShifts(fullUser.getShifts());
-            user.setPassword(fullUser.getPassword());
+    public ResponseEntity<FullUserDTO> createUser(@RequestBody FullUserDTO fullUser) {
+        User user = new User();
+        user.setName(fullUser.getName());
+        user.setSurname(fullUser.getSurname());
+        user.setMiddleName(fullUser.getMiddleName());
+        user.setBirthday(fullUser.getBirthday());
+        user.setAddress(fullUser.getAddress());
+        user.setEmail(fullUser.getEmail());
+        user.setPhoneNumber(fullUser.getPhoneNumber());
+        user.setRole(fullUser.getRole());
+        user.setPassword(fullUser.getPassword());
+        userDAO.insert(user);
 
-            userDAO.insert(user);
-
-            return new ResponseEntity<>(new FullUserDTO().convert(user), HttpStatus.OK);
-        } else {
-            throw new RestException(HttpStatus.CONFLICT, 409001, "Entity already exists");
-        }
+        return new ResponseEntity<>(new FullUserDTO().convert(user), HttpStatus.OK);
     }
 
 }

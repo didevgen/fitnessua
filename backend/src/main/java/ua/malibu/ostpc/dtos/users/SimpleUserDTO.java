@@ -1,11 +1,12 @@
 package ua.malibu.ostpc.dtos.users;
 
 
+import ua.malibu.ostpc.dtos.BaseUuidDTO;
 import ua.malibu.ostpc.dtos.IDto;
 import ua.malibu.ostpc.enums.UserRole;
 import ua.malibu.ostpc.models.User;
 
-public class SimpleUserDTO implements IDto<User>{
+public class SimpleUserDTO extends BaseUuidDTO<User>{
 
     public SimpleUserDTO() {}
 
@@ -41,6 +42,7 @@ public class SimpleUserDTO implements IDto<User>{
 
     @Override
     public SimpleUserDTO convert(User object){
+        this.setUuid(object.getUuid());
         this.setName(object.getName());
         this.setSurname(object.getSurname());
         this.setRole(object.getRole());

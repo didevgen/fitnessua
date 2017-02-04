@@ -1,14 +1,16 @@
 package ua.malibu.ostpc.dtos.users;
 
 import org.joda.time.DateTime;
+import ua.malibu.ostpc.dtos.BaseUuidDTO;
 import ua.malibu.ostpc.enums.UserRole;
 import ua.malibu.ostpc.models.Shift;
 import ua.malibu.ostpc.models.User;
 import ua.malibu.ostpc.dtos.IDto;
+import ua.malibu.ostpc.models.base.UUIDEntity;
 
 import java.util.List;
 
-public class FullUserDTO implements IDto<User>{
+public class FullUserDTO extends BaseUuidDTO<User> {
 
     private String name;
     private String surname;
@@ -96,6 +98,7 @@ public class FullUserDTO implements IDto<User>{
 
     @Override
     public FullUserDTO convert(User object){
+        this.setUuid(object.getUuid());
         this.setName(object.getName());
         this.setSurname(object.getSurname());
         this.setMiddleName(object.getMiddleName());

@@ -15,11 +15,11 @@ import java.util.List;
 @Table(name = "work_day")
 public class WorkDay extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Club club;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Schedule schedule;
 
@@ -27,7 +27,7 @@ public class WorkDay extends BaseEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime date;
 
-    @OneToMany(mappedBy = "workingDay", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "workingDay", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Shift> shifts = new ArrayList<>();
 
     @Column(name = "max_employees")
