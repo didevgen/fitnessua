@@ -1,7 +1,9 @@
 package ua.malibu.ostpc.dtos;
 
+import ua.malibu.ostpc.models.base.UUIDEntity;
+
 public interface IDto<T> {
 
-    <C extends IDto<T>> C convert(T object);
+    IDto<T> convert(T object);
 
 }

@@ -23,10 +23,13 @@ public class AuthFilter extends GenericFilterBean{
     @Override
     public void doFilter(ServletRequest httpServletRequest, ServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String curToken = ((HttpServletRequest)httpServletRequest).getHeader("x-auth-token");
+        if (curToken == null) {
+            throw new RestException(HttpStatus.UNAUTHORIZED, 404001, "Token not found!");
+        }
         String uuid = redisRepository.get(curToken);
         if (uuid == null) {
             logger.info("Token " + curToken + " has expired");
-            throw new RestException(HttpStatus.UNAUTHORIZED, 40001, "Token not found!");
+            throw new RestException(HttpStatus.UNAUTHORIZED, 404001, "Token not found!");
         } else {
             redisRepository.refreshExpirationTime(curToken);
             filterChain.doFilter(httpServletRequest, httpServletResponse);
