@@ -1,6 +1,7 @@
 package ua.malibu.ostpc.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.Type;
@@ -44,9 +45,12 @@ public class User extends BaseEntity {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "users_shifts",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "shift_id"))
-    private List<Shift> shifts;
+            joinColumns = @JoinColumn,
+            inverseJoinColumns = @JoinColumn)
+    private List<Shift> shifts = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy="users", fetch = FetchType.LAZY)
+    private List<ClubPreference> preferences = new ArrayList<>();
 
     public User() {
     }
@@ -131,5 +135,11 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
+    public List<ClubPreference> getPreferences() {
+        return preferences;
+    }
 
+    public void setPreferences(List<ClubPreference> preferences) {
+        this.preferences = preferences;
+    }
 }

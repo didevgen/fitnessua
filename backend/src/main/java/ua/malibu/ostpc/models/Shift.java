@@ -3,6 +3,7 @@ package ua.malibu.ostpc.models;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,17 +11,14 @@ import java.util.List;
 public class Shift extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "workday_id")
+    @JoinColumn
     private WorkDay workingDay;
 
     @Column(name = "shift_ordinal")
     private Integer shiftOrdinal;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "users_shifts",
-               joinColumns = @JoinColumn(name = "shift_id"),
-               inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> workersOnShift;
+    @ManyToMany(mappedBy="shifts")
+    private List<User> workersOnShift = new ArrayList<>();
 
     public WorkDay getWorkingDay() {
         return workingDay;
