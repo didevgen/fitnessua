@@ -1,43 +1,24 @@
 package ua.malibu.ostpc.dtos.shift;
 
-import ua.malibu.ostpc.dtos.IDto;
+import ua.malibu.ostpc.dtos.BaseUuidDTO;
 import ua.malibu.ostpc.models.Shift;
-import ua.malibu.ostpc.models.User;
-import ua.malibu.ostpc.models.WorkDay;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Игорь on 01.02.2017.
  */
 
-public class ShiftDTO  implements IDto<Shift> {
-    /**
-     *     Complex entity is not good for DTO
-     *     The main problem you will have circular reference error
-     *     while transfering to JSON
-     *     You can do in a such way
-     *     private String workingDayUuid;
-     *
-     *     or
-     *
-     *     private WorkingDayDTO workingDay
-     */
-    private WorkDay workingDay;
+public class ShiftDTO extends BaseUuidDTO {
+    private String workingDay;
     private Integer shiftOrdinal;
+    private List<String> workersOnShift;
 
-    /**
-     * Same shit :)
-     * Use List<String> users
-     *
-     * or List<UserDTO> users
-     */
-    private List<User> workersOnShift;
-
-    public WorkDay getWorkingDay() {
+    public String getWorkingDay() {
         return workingDay;
     }
 
-    public void setWorkingDay(WorkDay workingDay) {
+    public void setWorkingDay(String workingDay) {
         this.workingDay = workingDay;
     }
 
@@ -49,19 +30,19 @@ public class ShiftDTO  implements IDto<Shift> {
         this.shiftOrdinal = shiftOrdinal;
     }
 
-    public List<User> getWorkersOnShift() {
+    public List<String> getWorkersOnShift() {
         return workersOnShift;
     }
 
-    public void setWorkersOnShift(List<User> workersOnShift) {
+    public void setWorkersOnShift(List<String> workersOnShift) {
         this.workersOnShift = workersOnShift;
     }
 
-    @Override
     public ShiftDTO convert(Shift object) {
-        this.setWorkingDay(object.getWorkingDay());
+        this.setWorkingDay(object.getWorkingDay().getUuid());
         this.setShiftOrdinal(object.getShiftOrdinal());
-        this.setWorkersOnShift(object.getWorkersOnShift());
+        this.setWorkersOnShift(object.getWorkersOnShift()
+                .stream().map(worker -> worker.getUuid()).collect(Collectors.toList()));
         return this;
     }
 }
