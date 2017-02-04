@@ -26,7 +26,7 @@ public class WorkDay extends BaseEntity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime date;
 
-    @OneToMany(mappedBy = "workingDay")
+    @OneToMany(mappedBy = "workingDay", cascade = CascadeType.ALL)
     private List<Shift> shifts;
 
     public Club getClub() {

@@ -11,7 +11,7 @@ public class Club extends BaseEntity {
     @Column(name="title")
     private String title;
 
-    @OneToMany(mappedBy = "club")
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL)
     private List<WorkDay> workingDays;
 
     public Club() {}

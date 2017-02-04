@@ -16,7 +16,7 @@ public class Shift extends BaseEntity {
     @Column(name = "shift_ordinal")
     private Integer shiftOrdinal;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "users_shifts",
                joinColumns = @JoinColumn(name = "shift_id"),
                inverseJoinColumns = @JoinColumn(name = "user_id"))
