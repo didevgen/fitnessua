@@ -6,32 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.malibu.ostpc.models.QUser;
 import ua.malibu.ostpc.models.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 @Repository("userDao")
 @Transactional
-public class UserDAO implements IDAO<User>{
+public class UserDAO extends BaseDAO<User>{
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Override
-    public void insert(User user) {
-        entityManager.persist(user);
-    }
-
-    @Override
-    public void update(User user) {
-        entityManager.merge(user);
-    }
-
-    @Override
-    public void delete(User user) {
-        entityManager.detach(user);
-    }
-
-    @Override
     public User getByEmail(String email) {
         return new JPAQuery<User>(entityManager)
                 .from(QUser.user)
@@ -39,6 +17,18 @@ public class UserDAO implements IDAO<User>{
                 .fetchOne();
     }
 
+    public boolean exists(String email, String password) {
+        return new JPAQuery<User>(entityManager)
+                .from(QUser.user)
+                .where(QUser.user.email.eq(email).and(QUser.user.password.eq(password)))
+                .fetchCount() > 0;
+    }
+    public User getByEmailAndPassword(String email, String password) {
+        return new JPAQuery<User>(entityManager)
+                .from(QUser.user)
+                .where(QUser.user.email.eq(email).and(QUser.user.password.eq(password)))
+                .fetchOne();
+    }
     @Override
     public User getById(String uuid) {
         return new JPAQuery<User>(entityManager)
@@ -47,12 +37,5 @@ public class UserDAO implements IDAO<User>{
                 .fetchOne();
     }
 
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
 }
