@@ -61,7 +61,7 @@ public class UserController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/user/{uuid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<FullUserDTO> createUser(@PathVariable(name = "uuid", required = true) String uuid,
                                                   @RequestBody FullUserDTO fullUser) {
