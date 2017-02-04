@@ -22,7 +22,7 @@ public class WorkDayController extends BaseController {
     @RequestMapping(value = "/workday/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<WorkDayDTO> getWorkDay (@PathVariable (name = "uuid", required = true) String uuid){
-        WorkDay workDay = workDayDAO.get(uuid);
+        WorkDay workDay = workDayDAO.getById(uuid);
         if(workDay != null){
             return new ResponseEntity<WorkDayDTO>(new WorkDayDTO().convert(workDay), HttpStatus.OK);
         }
@@ -34,7 +34,7 @@ public class WorkDayController extends BaseController {
     @RequestMapping(value = "/workday/{uuid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<Boolean> deleteWorkDay (@PathVariable (name = "uuid") String uuid){
-        WorkDay workDay = workDayDAO.get(uuid);
+        WorkDay workDay = workDayDAO.getById(uuid);
         if (workDay != null){
             workDayDAO.delete(workDay);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -48,7 +48,7 @@ public class WorkDayController extends BaseController {
     @ResponseBody
     public ResponseEntity<WorkDayDTO> updateWorkDay (@PathVariable (name = "uuid") String uuid,
                                                      @RequestBody WorkDayDTO workDayDTO) {
-        WorkDay workDay = workDayDAO.get(uuid);
+        WorkDay workDay = workDayDAO.getById(uuid);
         if (workDay != null){
             workDay.setClub(new JPAQuery<Club>(entityManager)
                     .from(QClub.club)

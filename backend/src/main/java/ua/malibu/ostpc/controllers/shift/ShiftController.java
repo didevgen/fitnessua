@@ -24,7 +24,7 @@ public class ShiftController extends BaseController
     @ResponseBody
     public ResponseEntity<ShiftDTO> getShift(@PathVariable (name = "uuid", required = true) String uuid)
     {
-        Shift shift = shiftDAO.get(uuid);
+        Shift shift = shiftDAO.getById(uuid);
         if(shift != null){
             return new ResponseEntity<>(new ShiftDTO().convert(shift), HttpStatus.OK);
         }
@@ -37,7 +37,7 @@ public class ShiftController extends BaseController
     @ResponseBody
     public ResponseEntity<Boolean> deleteShift(@PathVariable (name = "uuid", required = true) String uuid)
     {
-        Shift shift = shiftDAO.get(uuid);
+        Shift shift = shiftDAO.getById(uuid);
         if(shift != null){
             shiftDAO.delete(shift);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -52,7 +52,7 @@ public class ShiftController extends BaseController
     public ResponseEntity<ShiftDTO> updateShift (@PathVariable (name = "uuid") String uuid,
                                        @RequestBody ShiftDTO shiftDTO)
     {
-        Shift shift = shiftDAO.get(uuid);
+        Shift shift = shiftDAO.getById(uuid);
         if(shift != null) {
             shift.setShiftOrdinal(shiftDTO.getShiftOrdinal());
             shift.setWorkersOnShift(new JPAQuery<User>(entityManager)

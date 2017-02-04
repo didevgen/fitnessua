@@ -15,10 +15,8 @@ import javax.persistence.PersistenceContext;
 @Repository("shiftDao")
 @Transactional
 public class ShiftDAO extends BaseDAO<Shift> {
-
-
     @Override
-    public Shift get(String uuid) {
+    public Shift getById(String uuid) {
         return new JPAQuery<Shift>(entityManager).from(QShift.shift).where(QShift.shift.uuid.eq(uuid)).fetchOne();
     }
 

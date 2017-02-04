@@ -34,9 +34,9 @@ public class BaseAuthenticationProvider implements AuthenticationProvider {
         try {
             if (user == null) {
                 logger.info("User with uuid " + authentication.getPrincipal() + " was not found.");
-                throw new RestException(HttpStatus.NOT_FOUND, 40004, "User " + authentication.getPrincipal() + " not found.");
+                throw new RestException(HttpStatus.NOT_FOUND, 404004, "User " + authentication.getPrincipal() + " not found.");
             } else if (!MD5.encrypt((String) authentication.getCredentials()).equals(user.getPassword())) {
-                throw new RestException(HttpStatus.UNAUTHORIZED, 40003, "Bad credentials!");
+                throw new RestException(HttpStatus.UNAUTHORIZED, 401003, "Bad credentials!");
             }
         } catch (NoSuchAlgorithmException e) {
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, 50000, "Encryption algorithm error");

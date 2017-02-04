@@ -9,7 +9,7 @@ import ua.malibu.ostpc.models.WorkDay;
  */
 public class WorkDayDAO extends BaseDAO<WorkDay> {
     @Override
-    public WorkDay get(String uuid) {
+    public WorkDay getById(String uuid) {
         return new JPAQuery<WorkDay>(entityManager).from(QWorkDay.workDay).where(QWorkDay.workDay.uuid.eq(uuid)).fetchOne();
     }
 }
