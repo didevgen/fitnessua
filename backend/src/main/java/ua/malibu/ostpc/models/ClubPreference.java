@@ -1,5 +1,7 @@
 package ua.malibu.ostpc.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.util.List;
 public class ClubPreference extends BaseEntity{
 
     @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     private Club club;
 

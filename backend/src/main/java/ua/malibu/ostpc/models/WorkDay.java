@@ -1,11 +1,10 @@
 package ua.malibu.ostpc.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.models.base.BaseEntity;
-import ua.malibu.ostpc.models.Club;
-import ua.malibu.ostpc.models.Schedule;
-import ua.malibu.ostpc.models.Shift;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ public class WorkDay extends BaseEntity {
     private DateTime date;
 
     @OneToMany(mappedBy = "workingDay", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Shift> shifts = new ArrayList<>();
 
     @Column(name = "max_employees")

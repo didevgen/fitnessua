@@ -1,14 +1,13 @@
 package ua.malibu.ostpc.models;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import ua.malibu.ostpc.enums.UserRole;
+import ua.malibu.ostpc.models.base.BaseEntity;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.springframework.security.core.Authentication;
-import ua.malibu.ostpc.enums.UserRole;
-import ua.malibu.ostpc.models.base.BaseEntity;
 
 @Entity
 @Table(name = "users")
