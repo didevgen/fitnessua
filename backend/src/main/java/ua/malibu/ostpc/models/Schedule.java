@@ -6,6 +6,7 @@ import ua.malibu.ostpc.enums.ScheduleStatus;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,8 +25,8 @@ public class Schedule extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ScheduleStatus status;
 
-    @OneToMany(mappedBy = "schedule")
-    private List<WorkDay> workingDays;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<WorkDay> workingDays = new ArrayList<>();
 
     public Schedule() {
     }

@@ -1,64 +1,34 @@
-package ua.malibu.ostpc.models;
+package ua.malibu.ostpc.dtos.users;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import org.joda.time.DateTime;
+import ua.malibu.ostpc.dtos.BaseUuidDTO;
+import ua.malibu.ostpc.enums.UserRole;
+import ua.malibu.ostpc.models.Shift;
+import ua.malibu.ostpc.models.User;
+import ua.malibu.ostpc.dtos.IDto;
+import ua.malibu.ostpc.models.base.UUIDEntity;
+
 import java.util.List;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.springframework.security.core.Authentication;
-import ua.malibu.ostpc.enums.UserRole;
-import ua.malibu.ostpc.models.base.BaseEntity;
+public class FullUserDTO extends BaseUuidDTO<User> {
 
-@Entity
-@Table(name = "users")
-public class User extends BaseEntity {
-
-    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "surname", nullable = false)
     private String surname;
-
-    @Column(name = "middle_name")
     private String middleName;
-
-    @Column
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime birthday;
-
-    @Column(name = "address")
     private String address;
-
-    @Column(name = "email")
     private String email;
-
-    @Column(name = "password")
     private String password;
-
-    @Column(name = "phone_number")
     private String phoneNumber;
-
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
     private UserRole role;
+    private List<Shift> shifts;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "users_shifts",
-            joinColumns = @JoinColumn,
-            inverseJoinColumns = @JoinColumn)
-    private List<Shift> shifts = new ArrayList<>();
-
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy="users", fetch = FetchType.LAZY)
-    private List<ClubPreference> preferences = new ArrayList<>();
-
-    public User() {
+    public FullUserDTO() {
     }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -66,7 +36,6 @@ public class User extends BaseEntity {
     public String getSurname() {
         return surname;
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -74,7 +43,6 @@ public class User extends BaseEntity {
     public String getMiddleName() {
         return middleName;
     }
-
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
     }
@@ -82,7 +50,6 @@ public class User extends BaseEntity {
     public DateTime getBirthday() {
         return birthday;
     }
-
     public void setBirthday(DateTime birthday) {
         this.birthday = birthday;
     }
@@ -90,7 +57,6 @@ public class User extends BaseEntity {
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
@@ -98,7 +64,6 @@ public class User extends BaseEntity {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -106,7 +71,6 @@ public class User extends BaseEntity {
     public String getPhoneNumber() {
         return phoneNumber;
     }
-
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -114,7 +78,6 @@ public class User extends BaseEntity {
     public UserRole getRole() {
         return role;
     }
-
     public void setRole(UserRole role) {
         this.role = role;
     }
@@ -122,7 +85,6 @@ public class User extends BaseEntity {
     public List<Shift> getShifts() {
         return shifts;
     }
-
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
     }
@@ -130,16 +92,24 @@ public class User extends BaseEntity {
     public String getPassword() {
         return password;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public List<ClubPreference> getPreferences() {
-        return preferences;
+    @Override
+    public FullUserDTO convert(User object){
+        this.setUuid(object.getUuid());
+        this.setName(object.getName());
+        this.setSurname(object.getSurname());
+        this.setMiddleName(object.getMiddleName());
+        this.setBirthday(object.getBirthday());
+        this.setAddress(object.getAddress());
+        this.setEmail(object.getEmail());
+        this.setPhoneNumber(object.getPhoneNumber());
+        this.setRole(object.getRole());
+        this.setShifts(object.getShifts());
+        this.setPassword(object.getPassword());
+        return this;
     }
 
-    public void setPreferences(List<ClubPreference> preferences) {
-        this.preferences = preferences;
-    }
 }

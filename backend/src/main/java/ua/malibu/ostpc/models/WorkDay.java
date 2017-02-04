@@ -8,26 +8,30 @@ import ua.malibu.ostpc.models.Schedule;
 import ua.malibu.ostpc.models.Shift;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "work_day")
 public class WorkDay extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "club_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Club club;
 
-    @ManyToOne
-    @JoinColumn(name = "schedule_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Schedule schedule;
 
     @Column
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime date;
 
-    @OneToMany(mappedBy = "workingDay")
-    private List<Shift> shifts;
+    @OneToMany(mappedBy = "workingDay", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Shift> shifts = new ArrayList<>();
+
+    @Column(name = "max_employees")
+    private Integer maxEmployeesCount;
 
     public Club getClub() {
         return club;
@@ -59,5 +63,13 @@ public class WorkDay extends BaseEntity {
 
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
+    }
+
+    public Integer getMaxEmployeesCount() {
+        return maxEmployeesCount;
+    }
+
+    public void setMaxEmployeesCount(Integer maxEmployeesCount) {
+        this.maxEmployeesCount = maxEmployeesCount;
     }
 }
