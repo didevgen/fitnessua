@@ -1,5 +1,7 @@
 package ua.malibu.ostpc.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.enums.ScheduleStatus;
@@ -26,6 +28,7 @@ public class Schedule extends BaseEntity {
     private ScheduleStatus status;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<WorkDay> workingDays = new ArrayList<>();
 
     public Schedule() {

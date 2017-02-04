@@ -1,5 +1,7 @@
 package ua.malibu.ostpc.models;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
@@ -13,9 +15,11 @@ public class Club extends BaseEntity {
     private String title;
 
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<WorkDay> workingDays = new ArrayList<>();
 
     @OneToMany(mappedBy = "club", cascade = {CascadeType.ALL})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Holiday> holidays = new ArrayList<>();
 
     @OneToOne(fetch=FetchType.LAZY, mappedBy="club")
