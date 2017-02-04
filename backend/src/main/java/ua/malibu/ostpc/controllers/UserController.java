@@ -1,6 +1,7 @@
 package ua.malibu.ostpc.controllers;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,34 +11,37 @@ import ua.malibu.ostpc.dtos.users.SimpleUserDTO;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.User;
 
+import javax.inject.Inject;
+
 @RestController
 public class UserController extends BaseController {
 
+    @Autowired
+    private UserDAO userDAO;
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<SimpleUserDTO> readUser(@PathVariable (name = "uuid", required = true) String uuid) {
-        return new ResponseEntity<>(new SimpleUserDTO().convert(new UserDAO().get(uuid)), HttpStatus.OK);
+    public ResponseEntity<SimpleUserDTO> readUser(@PathVariable(name = "uuid", required = true) String uuid) {
+        return new ResponseEntity<>(new SimpleUserDTO().convert(userDAO.get(uuid)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<Boolean> deleteUser(@PathVariable (name = "uuid", required = true) String uuid) {
-        User user = new UserDAO().getEntityManager().find(User.class,uuid);
+    public ResponseEntity deleteUser(@PathVariable(name = "uuid", required = true) String uuid) {
+        User user = userDAO.get(uuid);
         if (user != null) {
             new UserDAO().delete(user);
         } else {
             throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
         }
-        return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<FullUserDTO> updateUser(@PathVariable (name = "uuid", required = true) String uuid,
-                                                    @RequestBody FullUserDTO fullUser)
-    {
-        User user = new UserDAO().get(uuid);
-        if(user != null) {
+    public ResponseEntity<FullUserDTO> updateUser(@PathVariable(name = "uuid", required = true) String uuid,
+                                                  @RequestBody FullUserDTO fullUser) {
+        User user = userDAO.get(uuid);
+        if (user != null) {
             user.setName(fullUser.getName());
             user.setSurname(fullUser.getSurname());
             user.setMiddleName(fullUser.getMiddleName());
@@ -49,9 +53,9 @@ public class UserController extends BaseController {
             user.setShifts(fullUser.getShifts());
             user.setPassword(fullUser.getPassword());
 
-            new UserDAO().update(user);
+            userDAO.update(user);
 
-            return new ResponseEntity<FullUserDTO>(new FullUserDTO().convert(user), HttpStatus.OK);
+            return new ResponseEntity<>(new FullUserDTO().convert(user), HttpStatus.OK);
         } else {
             throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
         }
@@ -59,11 +63,10 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<FullUserDTO> createUser(@PathVariable (name = "uuid", required = true) String uuid,
-                                                  @RequestBody FullUserDTO fullUser)
-    {
-        User user = new UserDAO().get(uuid);
-        if(user == null) {
+    public ResponseEntity<FullUserDTO> createUser(@PathVariable(name = "uuid", required = true) String uuid,
+                                                  @RequestBody FullUserDTO fullUser) {
+        User user = userDAO.get(uuid);
+        if (user == null) {
             user.setName(fullUser.getName());
             user.setSurname(fullUser.getSurname());
             user.setMiddleName(fullUser.getMiddleName());
@@ -75,11 +78,11 @@ public class UserController extends BaseController {
             user.setShifts(fullUser.getShifts());
             user.setPassword(fullUser.getPassword());
 
-            new UserDAO().insert(user);
+            userDAO.insert(user);
 
-            return new ResponseEntity<FullUserDTO>(new FullUserDTO().convert(user), HttpStatus.OK);
+            return new ResponseEntity<>(new FullUserDTO().convert(user), HttpStatus.OK);
         } else {
-            throw new RestException(HttpStatus.CONFLICT, 409001, "Entity does already exist");
+            throw new RestException(HttpStatus.CONFLICT, 409001, "Entity already exists");
         }
     }
 

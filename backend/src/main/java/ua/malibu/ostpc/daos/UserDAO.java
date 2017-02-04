@@ -11,6 +11,9 @@ import ua.malibu.ostpc.models.User;
 public class UserDAO extends BaseDAO<User>{
     @Override
     public User get(String uuid) {
-        return new JPAQuery<User>(entityManager).from(QUser.user).where(QUser.user.uuid.eq(uuid)).fetchOne();
+        return new JPAQuery<User>(entityManager)
+                .from(QUser.user)
+                .where(QUser.user.uuid.eq(uuid))
+                .fetchOne();
     }
 }
