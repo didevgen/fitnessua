@@ -1,17 +1,16 @@
-package ua.malibu.ostpc.controllers;
+package ua.malibu.ostpc.controllers.user;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.malibu.ostpc.controllers.BaseController;
 import ua.malibu.ostpc.daos.UserDAO;
-import ua.malibu.ostpc.dtos.users.FullUserDTO;
-import ua.malibu.ostpc.dtos.users.SimpleUserDTO;
+import ua.malibu.ostpc.dtos.user.FullUserDTO;
+import ua.malibu.ostpc.dtos.user.SimpleUserDTO;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.User;
-
-import javax.inject.Inject;
 
 @RestController
 public class UserController extends BaseController {
