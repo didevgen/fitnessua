@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ua.malibu.ostpc.controllers.BaseController;
 import ua.malibu.ostpc.exceptions.rest.RestException;
@@ -31,11 +32,9 @@ public class TestController {
     public void tes1(@PathVariable(name = "testId") Integer testId) throws IOException {
     }
 
+    @Transactional
     @RequestMapping("/blah")
-    public ResponseEntity someMethod(HttpServletRequest r) throws NoSuchAlgorithmException {
-        for (String re : r.getParameterMap().keySet()) {
-            System.out.println(re);
-        }
+    public ResponseEntity someMethod(HttpServletRequest req) throws NoSuchAlgorithmException {
         User user = new User();
         user.setSurname("petrov");
         user.setName("petr");

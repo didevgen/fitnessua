@@ -1,14 +1,15 @@
 package ua.malibu.ostpc.utils.auth;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.User;
 import ua.malibu.ostpc.services.AuthToken;
@@ -16,7 +17,6 @@ import ua.malibu.ostpc.services.UserService;
 import ua.malibu.ostpc.utils.MD5;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 
 @Component
 public class BaseAuthenticationProvider implements AuthenticationProvider {
@@ -42,7 +42,6 @@ public class BaseAuthenticationProvider implements AuthenticationProvider {
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, 50000, "Encryption algorithm error");
         }
         AuthToken authToken = new AuthToken(tokenGenerator.issueToken(user.getUuid()), user.getUuid());
-        System.out.println(authToken.getTokenValue());
         return new LoginToken(user.getEmail(), user.getPassword(), authToken, user);
     }
 

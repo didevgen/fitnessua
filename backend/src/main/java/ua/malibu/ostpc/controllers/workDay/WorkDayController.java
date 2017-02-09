@@ -24,7 +24,7 @@ public class WorkDayController extends BaseController {
     public ResponseEntity<WorkDayDTO> getWorkDay (@PathVariable (name = "uuid", required = true) String uuid){
         WorkDay workDay = workDayDAO.getById(uuid);
         if(workDay != null){
-            return new ResponseEntity<WorkDayDTO>(new WorkDayDTO().convert(workDay), HttpStatus.OK);
+            return new ResponseEntity<>(new WorkDayDTO().convert(workDay), HttpStatus.OK);
         }
         else {
             throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
