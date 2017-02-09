@@ -7,5 +7,5 @@ public interface IDAO<T> {
     void insert(T t);
     void update (T t);
     void delete(T t);
-    T getById(String uuid);
+    T get(String uuid);
 }

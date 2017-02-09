@@ -1,12 +1,13 @@
 package ua.malibu.ostpc.daos;
 
 import com.querydsl.jpa.impl.JPAQuery;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ua.malibu.ostpc.models.QSchedule;
 import ua.malibu.ostpc.models.Schedule;
 
-/**
- * Created by Игорь on 09.02.2017.
- */
+@Repository
+@Transactional
 public class ScheduleDAO extends BaseDAO<Schedule> {
     @Override
     public Schedule get(String uuid) {

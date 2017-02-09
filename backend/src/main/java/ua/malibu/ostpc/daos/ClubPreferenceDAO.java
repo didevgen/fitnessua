@@ -4,9 +4,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import ua.malibu.ostpc.models.ClubPreference;
 import ua.malibu.ostpc.models.QClubPreference;
 
-/**
- * Created by Игорь on 09.02.2017.
- */
 public class ClubPreferenceDAO extends BaseDAO<ClubPreference> {
     @Override
     public ClubPreference get(String uuid) {

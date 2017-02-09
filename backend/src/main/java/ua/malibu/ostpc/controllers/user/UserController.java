@@ -21,13 +21,13 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<SimpleUserDTO> readUser(@PathVariable(name = "uuid", required = true) String uuid) {
-        return new ResponseEntity<>(new SimpleUserDTO().convert(userDAO.getById(uuid)), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleUserDTO().convert(userDAO.get(uuid)), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{uuid}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity deleteUser(@PathVariable(name = "uuid", required = true) String uuid) {
-        User user = userDAO.getById(uuid);
+        User user = userDAO.get(uuid);
         if (user != null) {
             new UserDAO().delete(user);
         } else {
@@ -40,7 +40,7 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResponseEntity<FullUserDTO> updateUser(@PathVariable(name = "uuid", required = true) String uuid,
                                                   @RequestBody FullUserDTO fullUser) {
-        User user = userDAO.getById(uuid);
+        User user = userDAO.get(uuid);
         if (user != null) {
             user.setName(fullUser.getName());
             user.setSurname(fullUser.getSurname());

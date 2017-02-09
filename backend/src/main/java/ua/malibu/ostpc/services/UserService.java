@@ -19,7 +19,7 @@ public class UserService {
     }
 
     public User getUserById(String uuid) {
-        return userDao.getById(uuid);
+        return userDao.get(uuid);
     }
 
     public void deleteUser(User user) {

@@ -30,7 +30,7 @@ public class UserDAO extends BaseDAO<User>{
                 .fetchOne();
     }
     @Override
-    public User getById(String uuid) {
+    public User get(String uuid) {
         return new JPAQuery<User>(entityManager)
                 .from(QUser.user)
                 .where(QUser.user.uuid.eq(uuid))

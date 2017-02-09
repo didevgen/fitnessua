@@ -5,9 +5,6 @@ import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.EntityManager;
 
-/**
- * Created by Eugne on 04.02.2017.
- */
 public abstract class BaseDAO<T extends BaseEntity> implements IDAO<T>{
 
     @Autowired
