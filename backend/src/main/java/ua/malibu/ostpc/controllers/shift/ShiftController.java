@@ -22,7 +22,7 @@ public class ShiftController extends BaseController
 
     @RequestMapping(value = "/shift/{uuid}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ShiftDTO> getShift(@PathVariable (name = "uuid", required = true) String uuid)
+    public ResponseEntity<ShiftDTO> getShift(@PathVariable (name = "uuid") String uuid)
     {
         Shift shift = shiftDAO.get(uuid);
         if(shift != null){

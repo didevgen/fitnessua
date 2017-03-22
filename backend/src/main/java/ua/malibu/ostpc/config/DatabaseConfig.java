@@ -5,6 +5,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -12,13 +13,14 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import redis.clients.jedis.JedisPoolConfig;
+import ua.malibu.ostpc.utils.auth.LoginToken;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-public class DatabaseConfig {
+public class DatabaseConfig{
 
     @Autowired
     private Environment env;
@@ -89,11 +91,11 @@ public class DatabaseConfig {
         return jedisFactory;
     }
 
-    @Bean
-    public StringRedisTemplate redisTemplate() {
-        StringRedisTemplate template = new StringRedisTemplate(jedisConnectionFactory());
+    @Bean(name="redisTemplate")
+    public RedisTemplate<String, LoginToken> redisTemplate() {
+        RedisTemplate<String, LoginToken> template = new RedisTemplate<>();
+        template.setConnectionFactory(jedisConnectionFactory());
         template.setEnableTransactionSupport(true);
         return template;
     }
-
 }

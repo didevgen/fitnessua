@@ -1,12 +1,10 @@
-package ua.malibu.ostpc.dtos.users;
+package ua.malibu.ostpc.dtos.user;
 
 import org.joda.time.DateTime;
 import ua.malibu.ostpc.dtos.BaseUuidDTO;
 import ua.malibu.ostpc.enums.UserRole;
 import ua.malibu.ostpc.models.Shift;
 import ua.malibu.ostpc.models.User;
-import ua.malibu.ostpc.dtos.IDto;
-import ua.malibu.ostpc.models.base.UUIDEntity;
 
 import java.util.List;
 

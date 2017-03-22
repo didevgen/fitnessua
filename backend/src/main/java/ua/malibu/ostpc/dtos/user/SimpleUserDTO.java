@@ -1,8 +1,7 @@
-package ua.malibu.ostpc.dtos.users;
+package ua.malibu.ostpc.dtos.user;
 
 
 import ua.malibu.ostpc.dtos.BaseUuidDTO;
-import ua.malibu.ostpc.dtos.IDto;
 import ua.malibu.ostpc.enums.UserRole;
 import ua.malibu.ostpc.models.User;
 
