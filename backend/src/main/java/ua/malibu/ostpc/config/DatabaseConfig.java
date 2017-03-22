@@ -13,6 +13,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import redis.clients.jedis.JedisPoolConfig;
+import ua.malibu.ostpc.utils.auth.LoginToken;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -91,8 +92,9 @@ public class DatabaseConfig{
     }
 
     @Bean(name="redisTemplate")
-    public RedisTemplate<String, String> redisTemplate() {
-        RedisTemplate<String, String> template = new StringRedisTemplate(jedisConnectionFactory());
+    public RedisTemplate<String, LoginToken> redisTemplate() {
+        RedisTemplate<String, LoginToken> template = new RedisTemplate<>();
+        template.setConnectionFactory(jedisConnectionFactory());
         template.setEnableTransactionSupport(true);
         return template;
     }

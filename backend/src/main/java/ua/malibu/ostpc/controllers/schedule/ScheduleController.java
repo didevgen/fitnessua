@@ -14,6 +14,9 @@ import ua.malibu.ostpc.models.QWorkDay;
 import ua.malibu.ostpc.models.Schedule;
 import ua.malibu.ostpc.models.WorkDay;
 
+import java.util.ArrayList;
+import java.util.TreeSet;
+
 /**
  * Created by Игорь on 09.02.2017.
  */
@@ -26,7 +29,7 @@ public class ScheduleController extends BaseController{
     public ResponseEntity<ScheduleDTO> getSchedule (@PathVariable (name = "uuid") String uuid){
         Schedule schedule = scheduleDAO.get(uuid);
         if (schedule != null){
-            return new ResponseEntity<ScheduleDTO>(new ScheduleDTO().convert(schedule), HttpStatus.OK);
+            return new ResponseEntity<>(new ScheduleDTO().convert(schedule), HttpStatus.OK);
         }
         else {
             throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
@@ -55,11 +58,11 @@ public class ScheduleController extends BaseController{
             schedule.setStartDate(DateTime.parse(scheduleDTO.getStartDate()));
             schedule.setEndDate(DateTime.parse(scheduleDTO.getEndDate()));
             schedule.setStatus(scheduleDTO.getStatus());
-            schedule.setWorkingDays(new JPAQuery<WorkDay>(entityManager)
+            schedule.setWorkingDays(new ArrayList<>(new JPAQuery<WorkDay>(entityManager)
                     .from(QWorkDay.workDay)
-                    .where(QWorkDay.workDay.uuid.in(scheduleDTO.getWorkingDays())).fetch());
+                    .where(QWorkDay.workDay.uuid.in(scheduleDTO.getWorkingDays())).fetch()));
             scheduleDAO.update(schedule);
-            return new ResponseEntity<ScheduleDTO>(new ScheduleDTO().convert(schedule), HttpStatus.OK);
+            return new ResponseEntity<>(new ScheduleDTO().convert(schedule), HttpStatus.OK);
         }
         else {
             throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
@@ -73,10 +76,10 @@ public class ScheduleController extends BaseController{
         schedule.setStartDate(DateTime.parse(scheduleDTO.getStartDate()));
         schedule.setEndDate(DateTime.parse(scheduleDTO.getEndDate()));
         schedule.setStatus(scheduleDTO.getStatus());
-        schedule.setWorkingDays(new JPAQuery<WorkDay>(entityManager)
+        schedule.setWorkingDays(new ArrayList<>(new JPAQuery<WorkDay>(entityManager)
                 .from(QWorkDay.workDay)
-                .where(QWorkDay.workDay.uuid.in(scheduleDTO.getWorkingDays())).fetch());
+                .where(QWorkDay.workDay.uuid.in(scheduleDTO.getWorkingDays())).fetch()));
         scheduleDAO.insert(schedule);
-        return new ResponseEntity<ScheduleDTO>(new ScheduleDTO().convert(schedule), HttpStatus.OK);
+        return new ResponseEntity<>(new ScheduleDTO().convert(schedule), HttpStatus.OK);
     }
 }

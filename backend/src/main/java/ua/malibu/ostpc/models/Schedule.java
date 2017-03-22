@@ -8,8 +8,7 @@ import ua.malibu.ostpc.enums.ScheduleStatus;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name="schedules")

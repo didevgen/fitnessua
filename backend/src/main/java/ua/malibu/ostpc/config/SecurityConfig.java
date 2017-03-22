@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import ua.malibu.ostpc.filters.*;
 import ua.malibu.ostpc.utils.auth.BaseAuthenticationProvider;
@@ -24,26 +26,44 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthFilter authFilter;
     @Autowired
     private BaseAuthenticationProvider authProv;
+    @Autowired
+    private SuccessHandler successHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProv);
     }
 
-    //Disable security at all for the sake of debugging
-    //REMOVE OVERRIDEN METHOD BEFORE RELEASE
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/**");
+        web.ignoring().antMatchers("/blah");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().loginPage("/login")
-                .successHandler(new SuccessHandler()).permitAll()
-        .and().authorizeRequests().anyRequest().authenticated()
-                .and().csrf().disable()
-                .addFilterBefore(authFilter, BasicAuthenticationFilter.class);
+        http
+                .authorizeRequests()
+                .antMatchers("/login").permitAll()
+                .antMatchers("/logout").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().successHandler(successHandler)
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .anonymous()
+                .and()
+                .securityContext()
+                .and()
+                .rememberMe().disable()
+                .requestCache().disable()
+                .x509().disable()
+                .csrf().disable()
+                .httpBasic().disable()
+                .logout().disable()
+                .addFilterBefore(authFilter, BasicAuthenticationFilter.class)
+                .authenticationProvider(authProv);
+
     }
 
     @Bean

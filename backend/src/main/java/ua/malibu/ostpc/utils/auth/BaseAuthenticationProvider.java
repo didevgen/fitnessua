@@ -1,7 +1,6 @@
 package ua.malibu.ostpc.utils.auth;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.User;
 import ua.malibu.ostpc.services.AuthToken;
@@ -41,8 +39,7 @@ public class BaseAuthenticationProvider implements AuthenticationProvider {
         } catch (NoSuchAlgorithmException e) {
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, 50000, "Encryption algorithm error");
         }
-        AuthToken authToken = new AuthToken(tokenGenerator.issueToken(user.getUuid()), user.getUuid());
-        return new LoginToken(user.getEmail(), user.getPassword(), authToken, user);
+        return new AuthToken(tokenGenerator.issueToken(user), user.getUuid());
     }
 
     @Override

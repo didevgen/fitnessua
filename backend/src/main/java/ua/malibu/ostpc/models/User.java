@@ -29,10 +29,10 @@ public class User extends BaseEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "phone_number")
@@ -41,6 +41,12 @@ public class User extends BaseEntity {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @Column(name = "min_working_time")
+    private Long minWorkingTime;
+
+    @Column(name = "max_working_time")
+    private Long maxWorkingTime;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "users_shifts",
@@ -140,5 +146,45 @@ public class User extends BaseEntity {
 
     public void setPreferences(List<ClubPreference> preferences) {
         this.preferences = preferences;
+    }
+
+    public Long getMinWorkingTime() {
+        return minWorkingTime;
+    }
+
+    public void setMinWorkingTime(Long minWorkingTime) {
+        this.minWorkingTime = minWorkingTime;
+    }
+
+    public Long getMaxWorkingTime() {
+        return maxWorkingTime;
+    }
+
+    public void setMaxWorkingTime(Long maxWorkingTime) {
+        this.maxWorkingTime = maxWorkingTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        if (!super.equals(o)) return false;
+
+        User user = (User) o;
+
+        if (!getName().equals(user.getName())) return false;
+        if (!getSurname().equals(user.getSurname())) return false;
+        if (!getEmail().equals(user.getEmail())) return false;
+        return getPassword().equals(user.getPassword());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + getName().hashCode();
+        result = 31 * result + getSurname().hashCode();
+        result = 31 * result + getEmail().hashCode();
+        result = 31 * result + getPassword().hashCode();
+        return result;
     }
 }

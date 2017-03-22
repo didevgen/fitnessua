@@ -9,10 +9,11 @@ import ua.malibu.ostpc.models.base.BaseEntity;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "work_day")
-public class WorkDay extends BaseEntity {
+public class WorkDay extends BaseEntity implements Comparable<WorkDay> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -32,6 +33,15 @@ public class WorkDay extends BaseEntity {
 
     @Column(name = "max_employees")
     private Integer maxEmployeesCount;
+
+    @Override
+    public int compareTo(WorkDay o) {
+        if (this.date.isBefore(o.getDate())) {
+            return -1;
+        } else if (this.date.isAfter(o.getDate())) {
+            return 1;
+        } else return this.getClub().compareTo(o.getClub());
+    }
 
     public Club getClub() {
         return club;
@@ -71,5 +81,19 @@ public class WorkDay extends BaseEntity {
 
     public void setMaxEmployeesCount(Integer maxEmployeesCount) {
         this.maxEmployeesCount = maxEmployeesCount;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        final WorkDay other = (WorkDay) obj;
+        return this.getDate().isEqual(other.getDate())
+                && this.getClub().equals(other.getClub());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getClub().hashCode() + this.getDate().hashCode();
     }
 }
