@@ -31,6 +31,9 @@ public class Club extends BaseEntity implements Comparable<Club>{
     @Column(name="shift_duration")
     private Integer shiftDuration;
 
+    @Column(name="address")
+    private String address;
+
     public Club() {}
 
     @Override
@@ -92,6 +95,14 @@ public class Club extends BaseEntity implements Comparable<Club>{
 
     public void setShiftDuration(Integer shiftDuration) {
         this.shiftDuration = shiftDuration;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override

@@ -6,8 +6,7 @@ import ua.malibu.ostpc.enums.UserRole;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -186,5 +185,16 @@ public class User extends BaseEntity {
         result = 31 * result + getEmail().hashCode();
         result = 31 * result + getPassword().hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder("Имя: " + this.name + " " + this.surname);
+        if (birthday != null)
+            res.append("\\nДата рождения: " + birthday.toString("dd-MM-yyyy"));
+        res.append("\\nE-mail:" + email);
+        if (phoneNumber != null)
+            res.append("\\nТелефонный номер: " + phoneNumber);
+        return res.toString();
     }
 }

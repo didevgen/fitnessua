@@ -7,15 +7,13 @@ import org.joda.time.DateTime;
 import ua.malibu.ostpc.models.base.BaseEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "work_day")
 public class WorkDay extends BaseEntity implements Comparable<WorkDay> {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn
     private Club club;
 

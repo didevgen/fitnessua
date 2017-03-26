@@ -11,9 +11,6 @@ import ua.malibu.ostpc.dtos.shift.ShiftDTO;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.*;
 
-/**
- * Created by Игорь on 31.01.2017.
- */
 @RestController
 public class ShiftController extends BaseController
 {

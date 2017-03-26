@@ -7,9 +7,6 @@ import ua.malibu.ostpc.models.Schedule;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by Игорь on 09.02.2017.
- */
 public class ScheduleDTO extends BaseUuidDTO {
     private String startDate;
     private String endDate;
@@ -53,7 +50,8 @@ public class ScheduleDTO extends BaseUuidDTO {
         this.setStartDate(object.getStartDate().toLocalDate().toString());
         this.setEndDate(object.getEndDate().toLocalDate().toString());
         this.setStatus(object.getStatus());
-        this.setWorkingDays(object.getWorkingDays().stream().map(schedule -> schedule.getUuid()).collect(Collectors.toList()));
+        this.setWorkingDays(object.getWorkingDays().stream().map(schedule
+                -> schedule.getUuid()).collect(Collectors.toList()));
         return this;
     }
 }

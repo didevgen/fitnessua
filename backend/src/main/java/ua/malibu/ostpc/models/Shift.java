@@ -17,7 +17,7 @@ public class Shift extends BaseEntity {
     @Column(name = "shift_ordinal")
     private Integer shiftOrdinal;
 
-    @ManyToMany(mappedBy="shifts")
+    @ManyToMany(mappedBy="shifts", cascade = CascadeType.ALL)
     private List<User> workersOnShift = new ArrayList<>();
 
     public WorkDay getWorkingDay() {

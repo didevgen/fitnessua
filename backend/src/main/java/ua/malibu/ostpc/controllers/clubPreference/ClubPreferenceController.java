@@ -11,9 +11,7 @@ import ua.malibu.ostpc.dtos.clubPreferenceDTO.ClubPreferenceDTO;
 import ua.malibu.ostpc.exceptions.rest.RestException;
 import ua.malibu.ostpc.models.*;
 
-/**
- * Created by Игорь on 09.02.2017.
- */
+@RestController
 public class ClubPreferenceController extends BaseController {
     @Autowired
     private ClubPreferenceDAO clubPreferenceDAO;
