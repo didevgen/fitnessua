@@ -3,19 +3,19 @@ package ua.malibu.ostpc.controllers.schedule;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import ua.malibu.ostpc.controllers.BaseController;
 import ua.malibu.ostpc.daos.ScheduleDAO;
 import ua.malibu.ostpc.dtos.schedule.ScheduleDTO;
 import ua.malibu.ostpc.exceptions.rest.RestException;
-import ua.malibu.ostpc.models.QWorkDay;
-import ua.malibu.ostpc.models.Schedule;
-import ua.malibu.ostpc.models.WorkDay;
+import ua.malibu.ostpc.models.*;
+import ua.malibu.ostpc.utils.ReportGenerator;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 @RestController
 public class ScheduleController extends BaseController{
@@ -32,6 +32,26 @@ public class ScheduleController extends BaseController{
         else {
             throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
         }
+    }
+
+    @RequestMapping(name="/schedule/api/report/{uuid}", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpEntity getReport( String uuid, HttpServletResponse resp) {
+        Schedule schedule = scheduleDAO.get("1");
+        if (schedule != null){
+            ReportGenerator generator = new ReportGenerator(schedule);
+            try {
+                StreamUtils.copy(generator.generateReport(), resp.getOutputStream());
+                resp.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            } catch (IOException e) {
+                throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, 50000,
+                        "IOException during output stream generation in ScheduleController");
+            }
+        }
+        else {
+            throw new RestException(HttpStatus.NOT_FOUND, 404001, "Entity not found");
+        }
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/schedule/{uuid}", method = RequestMethod.DELETE)

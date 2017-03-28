@@ -2,10 +2,15 @@ package ua.malibu.ostpc.utils;
 
 import be.quodlibet.boxable.*;
 import be.quodlibet.boxable.text.WrappingFunction;
+import be.quodlibet.boxable.utils.FontUtils;
 import org.apache.log4j.Logger;
+import org.apache.pdfbox.cos.COSInputStream;
 import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.printing.PDFPageable;
 import org.joda.time.DateTime;
 import org.springframework.http.HttpStatus;
 import ua.malibu.ostpc.exceptions.rest.RestException;
@@ -14,6 +19,7 @@ import ua.malibu.ostpc.models.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ReportGenerator {
     private static final Logger logger = Logger.getLogger(ReportGenerator.class);
@@ -26,16 +32,22 @@ public class ReportGenerator {
 
     private Schedule schedule;
     private Report report = new Report();
+    private PDDocument pdDocument;
+    private float curHeight;
+    private float width;
+    private float tableLineSpacing;
+    private PDFont font;
+    private PDFont fontBold;
 
     public ReportGenerator(Schedule schedule) {
         this.schedule = schedule;
     }
 
-    public void generateReport() {
-        generateReport(schedule.getStartDate(), schedule.getEndDate());
+    public InputStream generateReport() {
+        return generateReport(schedule.getStartDate(), schedule.getEndDate());
     }
 
-    public void generateReport(DateTime startDate, DateTime endDate) {
+    public InputStream generateReport(DateTime startDate, DateTime endDate) {
         Map<User, ReportUnit> reportUnits = new HashMap<>();
         Set<User> users = schedule.getWorkingDays().stream()
                                     .filter(day -> day.getDate().isBefore(endDate.withTime(23, 59, 59, 999))
@@ -61,19 +73,20 @@ public class ReportGenerator {
         report.setEndTime((schedule.getEndDate().isBefore(DateTime.now().withTime(23, 59, 59, 999)))
                           ? schedule.getEndDate()
                           : DateTime.now());
-        generatePdfReport();
+        return generatePdfReport();
     }
 
-    private PDDocument generatePdfReport() {
-        try(PDDocument pdDocument = new PDDocument()) {
+    private InputStream generatePdfReport() {
+        try {
+            pdDocument = new PDDocument();
             PDPage page = new PDPage();
             String begString = "Отчёт по работе сотрудников согласно расписанию ";
             String numberString = "№" + schedule.getId();
-            float width = page.getMediaBox().getWidth();
-            float curHeight = page.getMediaBox().getHeight() - MARGIN;
-            PDFont font = PDType0Font.load(pdDocument,
+            width = page.getMediaBox().getWidth();
+            curHeight = page.getMediaBox().getHeight() - MARGIN;
+            font = PDType0Font.load(pdDocument,
                     new File("./src/main/resources/PTM55F.ttf"));
-            PDFont fontBold = PDType0Font.load(pdDocument,
+            fontBold = PDType0Font.load(pdDocument,
                     new File("./src/main/resources/PTM75F.ttf"));
 
             pdDocument.addPage(page);
@@ -82,18 +95,19 @@ public class ReportGenerator {
 
             /* Header generation */
             stream.beginText();
-            if ((getStringWidth(begString + numberString, font, HEADER_FONT_SIZE)) < (width - 2 * MARGIN)) {
+            stream.setLeading(1);
+            if ((getStringWidth(begString + numberString, HEADER_FONT_SIZE)) < (width - 2 * MARGIN)) {
                 stream.newLineAtOffset(width / 2 - getStringWidth
-                                (begString + numberString, font, HEADER_FONT_SIZE) / 2,
+                                (begString + numberString, HEADER_FONT_SIZE) / 2,
                         curHeight);
                 stream.showText(begString);
             } else {
                 stream.newLineAtOffset(width / 2 - getStringWidth
-                                (begString, font, HEADER_FONT_SIZE) / 2,
+                                (begString, HEADER_FONT_SIZE) / 2,
                         curHeight);
                 stream.showText(begString);
-                stream.newLineAtOffset(getStringWidth(begString, font, HEADER_FONT_SIZE) / 2
-                                - getStringWidth(numberString, font, HEADER_FONT_SIZE) / 2,
+                stream.newLineAtOffset(getStringWidth(begString, HEADER_FONT_SIZE) / 2
+                                - getStringWidth(numberString, HEADER_FONT_SIZE) / 2,
                         - MARGIN);
                 curHeight -= MARGIN;
             }
@@ -107,7 +121,7 @@ public class ReportGenerator {
             stream.showText("Дата начала: " + report.getStartTime().toString("dd-MM-yyyy"));
             stream.newLineAtOffset(width - MARGIN * 2 - getStringWidth
                     ("Дата окончания: " + report.getEndTime().toString("dd-MM-yyyy"),
-                            font, HEADER_FONT_SIZE), 0);
+                            HEADER_FONT_SIZE), 0);
             stream.showText("Дата окончания: " + report.getEndTime().toString("dd-MM-yyyy"));
             curHeight -= MARGIN * 2;
             stream.endText();
@@ -120,148 +134,218 @@ public class ReportGenerator {
             }
             curHeight -= MARGIN;
             stream.endText();
+            stream.close();
 
             /* Table generation */
             float firstColWidthRel = 40f;
             float secondColWidthRel = 60f;
-            Row<PDPage> curRow;
-            BaseTable table = new BaseTable(curHeight, page.getMediaBox().getHeight() - MARGIN,
+            BaseTable table = new BaseTable(curHeight, page.getMediaBox().getHeight(),
                     MARGIN, MARGIN, width - MARGIN * 2, MARGIN, pdDocument, page,
                     true, true);
             float firstColWidthAbs;
-            float secondColWidthAbs;
             Row<PDPage> headerRow = table.createRow(MARGIN);
-            table.addHeaderRow(headerRow);
+            tableLineSpacing = table.getLineSpacing();
 
-            headerRow.createCell(firstColWidthRel, "Администратор",
-                    HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-            firstColWidthAbs = headerRow.getCells().get(0).getInnerWidth();
-            headerRow.createCell(secondColWidthRel, "Занятость",
-                    HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-            secondColWidthAbs = headerRow.getCells().get(1).getInnerWidth();
+            firstColWidthAbs = createHeaderCell(headerRow, "Администратор", firstColWidthRel)
+                    .getInnerWidth();
+            createHeaderCell(headerRow, "Занятость", secondColWidthRel);
+            curHeight -= headerRow.getHeight();
             for (Map.Entry<User, ReportUnit> entry : report.getReportUnits().entrySet()) {
-                curRow = table.createRow(10);
-                Cell<PDPage> userCell = curRow.createCell(firstColWidthRel, "");
-                fillUserCell(userCell, firstColWidthAbs, entry.getKey(), font);
-                Cell<PDPage> activityCell = curRow.createCell(secondColWidthRel, "");
-                fillActivityCell(activityCell, secondColWidthAbs, entry.getValue(), font);
+                Row<PDPage> row = table.createRow(1);
+                fillUserCell(createCell(row, "", firstColWidthRel), firstColWidthAbs, entry.getKey());
+                if (curHeight < table.getMargin()) {
+                    curHeight = table.getCurrentPage().getMediaBox().getHeight()
+                            - MARGIN - table.getRows().get(0).getHeight();
+                } else {
+                    curHeight += row.getCells().get(0).getHeight();
+                }
+                fillActivityCell(table, firstColWidthRel, secondColWidthRel, entry.getValue());
             }
-            table.getRows().forEach(row -> row.getCells()
-                    .stream()
-                    .peek(cell -> cell.setFont(font))
-                    .peek(cell -> cell.setFontBold(fontBold))
-                    .peek(cell -> cell.setFontSize(TABLE_FONT_SIZE))
-                    .forEach(cell -> cell.setWrappingFunction(WRAPPING_FUNCTION)));
+            table.addHeaderRow(headerRow);
+            headerRow.getCells().forEach(cell -> {
+                cell.setHeaderCell(true);
+            });
+            curHeight = table.draw() - MARGIN;
+            stream = new PDPageContentStream(pdDocument,
+                    table.getCurrentPage(),
+                    PDPageContentStream.AppendMode.APPEND, true);
+            stream.setFont(font, HEADER_FONT_SIZE);
             stream.beginText();
-            curHeight = table.draw() - MARGIN * 2;
             stream.newLineAtOffset(MARGIN, curHeight);
             stream.showText("Дата и время составления отчёта: "
                     + DateTime.now().toString("dd-MM-yyyy HH:mm:ss"));
             stream.endText();
             stream.close();
             pdDocument.save("D://report.pdf");
-            return pdDocument;
+            return new PDStream(pdDocument).createInputStream();
         } catch (IOException e) {
             logger.error("IOException happened during report generation." +
                     " Wrapped by runtime exception.", e);
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, 50000,
-                    "Exception duting report generation.");
+                    "Exception during report generation.");
         }
-
+        finally {
+            try {
+                pdDocument.close();
+            } catch (IOException e) {
+                logger.error("IOException happened during report generation." +
+                        " Wrapped by runtime exception.", e);
+                throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, 50000,
+                        "Exception during document closing.");
+            }
+        }
     }
 
-    private float getStringWidth(String str, PDFont font, int fontSize) throws IOException{
+    private float getStringWidth(String str, int fontSize) throws IOException{
         return font.getStringWidth(str) / 1000 * fontSize;
     }
 
-    private float getSpaceWidth(PDFont font, int fontSize) {
+    private float getSpaceWidth(int fontSize) {
         return font.getSpaceWidth() / 1000 * fontSize;
     }
 
-    private void fillUserCell(Cell<PDPage> cell, float firstColWidth, User curUser,
-                                      PDFont font) throws IOException{
+    private void fillUserCell(Cell<PDPage> cell, float firstColWidth, User curUser) throws IOException{
         String curString;
 
         curString = "Имя: " + curUser.getName() + " " + curUser.getSurname();
-        cell.setText(curString + breakLine(curString, firstColWidth, font));
+        cell.setText(curString + breakLine(curString, firstColWidth));
         if (curUser.getBirthday() != null) {
             curString = "Дата рождения: " + curUser.getBirthday().toString("dd-MM-yyyy");
             cell.setText(cell.getText() + curString
-                    + breakLine(curString, firstColWidth, font));
+                    + breakLine(curString, firstColWidth));
         }
         curString = "E-mail: " + curUser.getEmail();
         cell.setText(cell.getText() + curString
-                + breakLine(curString, firstColWidth, font));
+                + breakLine(curString, firstColWidth));
         if (curUser.getPhoneNumber() != null) {
             curString = "Телефонный номер: " + curUser.getPhoneNumber();
-            cell.setText(cell.getText() + curString);
+            cell.setText(cell.getText() + breakLine(curString, firstColWidth));
         }
+        curHeight -= (cell.getTopPadding() + cell.getBottomPadding()
+                + cell.getTopBorder().getWidth()
+                + cell.getBottomBorder().getWidth());
     }
 
-    private void fillActivityCell(Cell<PDPage> cell, float secondColWidth, ReportUnit unit,
-                                         PDFont font) throws IOException {
+    private void fillActivityCell(Table<PDPage> table, float firstColWidthRel,
+                                  float secondColWidthRel, ReportUnit unit) throws IOException {
         Map<Club, Integer> shifts = unit.getShifts();
         String curString;
+        StringBuilder cellContent;
         Club club;
         long hoursOverall = 0;
         Iterator<Club> iter = shifts.keySet().iterator();
+        Row<PDPage> curRow = table.getRows().get(table.getRows().size() - 1);
+        Cell<PDPage> userCell = table.getRows().get(table.getRows().size() - 1).getCells().get(0),
+                cell = createCell(curRow, "", secondColWidthRel);
+        float secondColWidthAbs = cell.getInnerWidth();
+        float lineStartY = curHeight;
+        curHeight -= (cell.getTopPadding() + cell.getTopBorder().getWidth());
 
         while (iter.hasNext()){
+            cellContent = new StringBuilder();
             club = iter.next();
             curString = "Название клуба: " + club.getTitle();
-            cell.setText(cell.getText() + curString
-                    + breakLine(curString, secondColWidth, font));
+            cellContent.append(curString + breakLine(curString, secondColWidthAbs));
             if (club.getAddress() != null) {
                 curString = "Адрес клуба: " + club.getAddress();
-                cell.setText(cell.getText() + curString
-                        + breakLine(curString, secondColWidth, font));
+                cellContent.append(curString + breakLine(curString, secondColWidthAbs));
             }
             curString = "Количество отработанных смен: " + shifts.get(club);
-            cell.setText(cell.getText() + curString
-                    + breakLine(curString, secondColWidth, font));
+            cellContent.append(curString + breakLine(curString, secondColWidthAbs));
             curString = "Количество отработанных часов: "
-                    + shifts.get(club) * club.getShiftDuration();
-            hoursOverall += shifts.get(club) * club.getShiftDuration();
-            cell.setText(cell.getText() + curString
-                    + breakLine(curString, secondColWidth, font));
-            cell.setText(cell.getText() + breakLine("", secondColWidth, font));
-        }
-        curString = "Всего отработано смен: " + shifts.values().stream().reduce((a, b) -> a + b).get();
-        cell.setText(cell.getText() + curString + breakLine(curString, secondColWidth, font));
-        curString = "Всего отработано часов: " + hoursOverall;
-        cell.setText(cell.getText() + curString + breakLine(curString, secondColWidth, font));
+                    + (hoursOverall += shifts.get(club) * club.getShiftDuration());
+            cellContent.append(curString + breakLine(curString, secondColWidthAbs));
+            cellContent.append("" + breakLine("", secondColWidthAbs));
+            if (!iter.hasNext()) {
+                curString = "Всего отработано смен: " + shifts.values().stream().reduce((a, b) -> a + b).get();
+                cellContent.append(curString + breakLine(curString, secondColWidthAbs));
+                curString = "Всего отработано часов: " + hoursOverall;
+                cellContent.append(curString + breakLine(curString, secondColWidthAbs));
+                curHeight = Math.min(curHeight, lineStartY - userCell.getHeight()
+                        + userCell.getBottomPadding() + userCell.getBottomBorder().getWidth());
+            }
+            if ((curHeight - cell.getBottomPadding() - cell.getBottomBorder().getWidth())
+                    < table.getMargin()) {
+                lineStartY = table.getCurrentPage().getMediaBox().getHeight()
+                        - MARGIN - table.getRows().get(0).getHeight();
+                curHeight = lineStartY - cell.getTopBorder().getWidth() - cell.getTopPadding();
+                if (cell.getText() != "") {
+                    cell.setText(cell.getText().trim());
+                    curRow = table.createRow(1);
+                    userCell = createCell(curRow, userCell.getText(), firstColWidthRel);
+                    cell = createCell(curRow, cellContent.toString(), secondColWidthRel);
+                } else {
+                        cell.setText(cellContent.toString());
+                    }
+                curHeight -= cell.getTextHeight();
+            } else {
+                    cell.setText(cell.getText() + cellContent.toString());
+                }
+            }
+        curHeight -= (cell.getBottomPadding() + cell.getBottomBorder().getWidth());
     }
 
-    private String breakLine(String str, float cellWidth, PDFont font) throws IOException {
-        float lastLineWidth = getLastLineWidth(str, font, cellWidth);
-        int amount = (int)((cellWidth - lastLineWidth) / getSpaceWidth(font, TABLE_FONT_SIZE));
+    private String breakLine(String str, float cellWidth) throws IOException {
+        float lastLineWidth = getLastLineWidth(str, cellWidth);
+        int amount = (int)((cellWidth - lastLineWidth) / getSpaceWidth(TABLE_FONT_SIZE));
         char[] spaces = new char[amount];
 
         Arrays.fill(spaces, ' ');
         return new String(spaces);
     }
 
-    private float getLastLineWidth(String str, PDFont font, float cellWidth) throws IOException{
-        float strWidth = getStringWidth(str, font, TABLE_FONT_SIZE);
+    private float getLastLineWidth(String str, float cellWidth) throws IOException{
+        float strWidth = getStringWidth(str, TABLE_FONT_SIZE);
         float lastLineWidth = 0;
         float curWidth;
-        String curToken;
+        String curToken, curSymbol;
 
         if (strWidth > cellWidth) {
             Deque<String> tokens = new LinkedList<>(Arrays.asList(WRAPPING_FUNCTION.getLines(str)));
             while (!tokens.isEmpty()) {
                 curToken = tokens.pollFirst();
-                curWidth = getStringWidth(curToken, font, TABLE_FONT_SIZE);
-                lastLineWidth += curWidth;
+                curWidth = getStringWidth(curToken, TABLE_FONT_SIZE);
                 if (curWidth > cellWidth) {
-                    lastLineWidth = lastLineWidth - cellWidth * (int)(lastLineWidth / cellWidth);
-                } else if (lastLineWidth > cellWidth) {
+                    if (lastLineWidth != 0) {
+                        lastLineWidth -= getSpaceWidth(TABLE_FONT_SIZE);
+                    }
+                    Deque<String> symbols
+                            = new LinkedList<>(Arrays.stream(curToken.split(""))
+                            .collect(Collectors.toList()));
+                    while (!symbols.isEmpty()) {
+                        curSymbol = symbols.pollFirst();
+                        lastLineWidth += getStringWidth(curSymbol, TABLE_FONT_SIZE);
+                        if (lastLineWidth > cellWidth) {
+                            lastLineWidth = getStringWidth(curSymbol, TABLE_FONT_SIZE);
+                            curHeight -= (FontUtils.getHeight(font, TABLE_FONT_SIZE) * tableLineSpacing);
+                        }
+                    }
+                } else if ((lastLineWidth += curWidth) > cellWidth) {
                     lastLineWidth = curWidth;
+                    curHeight -= FontUtils.getHeight(font, TABLE_FONT_SIZE) * tableLineSpacing;
                 }
             }
         } else {
             lastLineWidth = strWidth;
         }
+        curHeight -= FontUtils.getHeight(font, TABLE_FONT_SIZE) * tableLineSpacing;
         return lastLineWidth;
+    }
+
+    private Cell<PDPage> createHeaderCell(Row<PDPage> row, String value, float width) {
+        Cell<PDPage> toReturn = createCell(row, value, width);
+        toReturn.setValign(VerticalAlignment.MIDDLE);
+        toReturn.setAlign(HorizontalAlignment.CENTER);
+        toReturn.setFont(fontBold);
+        return toReturn;
+    }
+
+    private Cell<PDPage> createCell(Row<PDPage> row, String value, float width) {
+        Cell<PDPage> toReturn = row.createCell(width, value);
+        toReturn.setFont(font);
+        toReturn.setFontBold(fontBold);
+        toReturn.setFontSize(TABLE_FONT_SIZE);
+        toReturn.setWrappingFunction(WRAPPING_FUNCTION);
+        return toReturn;
     }
 }

@@ -135,9 +135,7 @@
 			<version>1.5-RC</version>
 		</dependency>
 
-
-
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<plugins>
