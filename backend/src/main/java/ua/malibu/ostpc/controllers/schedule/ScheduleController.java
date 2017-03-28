@@ -17,9 +17,6 @@ import ua.malibu.ostpc.models.WorkDay;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
-/**
- * Created by Игорь on 09.02.2017.
- */
 public class ScheduleController extends BaseController{
     @Autowired
     private ScheduleDAO scheduleDAO;

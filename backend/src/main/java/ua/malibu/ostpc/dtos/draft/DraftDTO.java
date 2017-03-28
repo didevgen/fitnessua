@@ -1,19 +1,17 @@
-package ua.malibu.ostpc.dtos.schedule;
+package ua.malibu.ostpc.dtos.draft;
 
 import ua.malibu.ostpc.dtos.BaseUuidDTO;
 import ua.malibu.ostpc.enums.ScheduleStatus;
-import ua.malibu.ostpc.models.Schedule;
+import ua.malibu.ostpc.models.Draft;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-public class ScheduleDTO extends BaseUuidDTO {
+public class DraftDTO extends BaseUuidDTO {
     private String startDate;
     private String endDate;
     private ScheduleStatus status;
     private List<String> workingDays;
-
 
     public String getStartDate() {
         return startDate;
@@ -47,11 +45,11 @@ public class ScheduleDTO extends BaseUuidDTO {
         this.workingDays = workingDays;
     }
 
-    public ScheduleDTO convert(Schedule object) {
+    public DraftDTO convert(Draft object) {
         this.setStartDate(object.getStartDate().toLocalDate().toString());
         this.setEndDate(object.getEndDate().toLocalDate().toString());
         this.setStatus(object.getStatus());
-        this.setWorkingDays(object.getWorkingDays().stream().map(schedule -> schedule.getUuid()).collect(Collectors.toList()));
+        this.setWorkingDays(object.getWorkingDays().stream().map(draft -> draft.getUuid()).collect(Collectors.toList()));
         return this;
     }
 }
