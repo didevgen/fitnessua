@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "drafts")
-public class Draft extends Schedule{
+public class Draft extends BaseEntity{
 
     @Column
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
