@@ -6,9 +6,6 @@ import ua.malibu.ostpc.models.ClubPreference;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by Игорь on 09.02.2017.
- */
 public class ClubPreferenceDTO extends BaseUuidDTO<ClubPreference> {
     private String club;
     private List<String> users;
