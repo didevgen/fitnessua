@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ua.malibu.ostpc.daos.ClubDAO;
@@ -18,7 +19,7 @@ import ua.malibu.ostpc.utils.ReportGenerator;
 import java.io.IOException;
 import java.util.*;
 
-@RestController
+@Controller
 public class TestController {
 
     @Autowired
@@ -38,6 +39,11 @@ public class TestController {
     public void tes1(@PathVariable(name = "testId") Integer testId) throws IOException {
     }
 
+    @RequestMapping(value = "/loginaaa", produces = "text/html")
+    public String method() {
+        return "index.html";
+    }
+
     @Transactional
     @RequestMapping("/blah")
     public ResponseEntity someMethod() throws Exception {
@@ -48,7 +54,6 @@ public class TestController {
         User user = new User();
         user.setSurname("petrov");
         user.setName("petr");
-        user.setId(1l);
         user.setBirthday(new DateTime(1, 2, 3, 4, 5));
         user.setEmail("qwe");
         user.setPassword(MD5.encrypt("rty"));
@@ -67,6 +72,7 @@ public class TestController {
         user2.setBirthday(new DateTime(1, 2, 3, 4, 5));
         user2.setEmail("       Улица пупшкkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkина дом колотушкина@rambler.com");
         user2.setPassword(MD5.encrypt("rty"));
+        userService.saveUser(user);
 
         Club club1 = new Club(), club2 = new Club(), club3 = new Club(),
         club4 = new Club(), club5 = new Club(), club6 = new Club(), club7 = new Club(), club8 = new Club();

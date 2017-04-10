@@ -85,9 +85,9 @@ public class ReportGenerator {
             width = page.getMediaBox().getWidth();
             curHeight = page.getMediaBox().getHeight() - MARGIN;
             font = PDType0Font.load(pdDocument,
-                    new File("./src/main/resources/PTM55F.ttf"));
+                    new File("./src/main/resources/fonts/PTM55F.ttf"));
             fontBold = PDType0Font.load(pdDocument,
-                    new File("./src/main/resources/PTM75F.ttf"));
+                    new File("./src/main/resources/fonts/PTM75F.ttf"));
 
             pdDocument.addPage(page);
             PDPageContentStream stream = new PDPageContentStream(pdDocument, page);

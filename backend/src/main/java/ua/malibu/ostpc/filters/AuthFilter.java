@@ -27,6 +27,7 @@ public class AuthFilter extends GenericFilterBean{
     public void doFilter(ServletRequest httpServletRequest, ServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String curToken = ((HttpServletRequest)httpServletRequest).getHeader("x-auth-token");
         if (curToken == null) {
+            logger.info("Token " + curToken + " not found");
             throw new RestException(HttpStatus.UNAUTHORIZED, 404001, "Token not found!");
         }
         LoginToken loginToken = redisRepository.get(curToken);

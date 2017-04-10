@@ -34,7 +34,7 @@ public class ScheduleController extends BaseController{
         }
     }
 
-    @RequestMapping(name="/schedule/api/report/{uuid}", method = RequestMethod.GET)
+    @RequestMapping(value="/schedule/api/report/{uuid}", method = RequestMethod.GET)
     @ResponseBody
     public HttpEntity getReport( String uuid, HttpServletResponse resp) {
         Schedule schedule = scheduleDAO.get("1");
