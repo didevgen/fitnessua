@@ -1,7 +1,3 @@
-/**
- * @author: @AngularClass
- */
-
 const helpers = require('./helpers');
 const webpackMerge = require('webpack-merge'); // used to merge webpack configs
 const commonConfig = require('./webpack.common.js'); // the settings that are common to prod and dev
@@ -17,16 +13,13 @@ const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplaceme
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const OptimizeJsPlugin = require('optimize-js-plugin');
-
 /**
  * Webpack Constants
  */
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 8080;
-const METADATA = webpackMerge(commonConfig({
-  env: ENV
-}).metadata, {
+const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   host: HOST,
   port: PORT,
   ENV: ENV,
@@ -34,9 +27,7 @@ const METADATA = webpackMerge(commonConfig({
 });
 
 module.exports = function (env) {
-  return webpackMerge(commonConfig({
-    env: ENV
-  }), {
+  return webpackMerge(commonConfig({env: ENV}), {
 
     /**
      * Developer tool to enhance debugging
@@ -86,38 +77,6 @@ module.exports = function (env) {
 
     },
 
-    module: {
-
-      rules: [
-
-        /*
-         * Extract CSS files from .src/styles directory to external CSS file
-         */
-        {
-          test: /\.css$/,
-          loader: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: 'css-loader'
-          }),
-          include: [helpers.root('src', 'styles')]
-        },
-
-        /*
-         * Extract and compile SCSS files from .src/styles directory to external CSS file
-         */
-        {
-          test: /\.scss$/,
-          loader: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: 'css-loader!sass-loader'
-          }),
-          include: [helpers.root('src', 'styles')]
-        },
-
-      ]
-
-    },
-
     /**
      * Add additional plugins to the compiler.
      *
@@ -137,12 +96,14 @@ module.exports = function (env) {
       }),
 
       /**
-       * Plugin: ExtractTextPlugin
-       * Description: Extracts imported CSS files into external stylesheet
+       * Plugin: DedupePlugin
+       * Description: Prevents the inclusion of duplicate code into your bundle
+       * and instead applies a copy of the function at runtime.
        *
-       * See: https://github.com/webpack/extract-text-webpack-plugin
+       * See: https://webpack.github.io/docs/list-of-plugins.html#defineplugin
+       * See: https://github.com/webpack/docs/wiki/optimization#deduplication
        */
-      new ExtractTextPlugin('[name].[contenthash].css'),
+      // new DedupePlugin(), // see: https://github.com/angular/angular-cli/issues/1587
 
       /**
        * Plugin: DefinePlugin
@@ -191,7 +152,7 @@ module.exports = function (env) {
         beautify: false, //prod
         output: {
           comments: false
-        }, //prod
+        },
         mangle: {
           screw_ie8: true
         }, //prod
@@ -208,6 +169,7 @@ module.exports = function (env) {
           join_vars: true,
           negate_iife: false // we need this for lazy v8
         },
+        comments: false //prod
       }),
 
       /**
@@ -227,36 +189,14 @@ module.exports = function (env) {
         helpers.root('config/empty.js')
       ),
 
+      /**
+       * Plugin: IgnorePlugin
+       * Description: Don’t generate modules for requests matching the provided RegExp.
+       *
+       * See: http://webpack.github.io/docs/list-of-plugins.html#ignoreplugin
+       */
 
-      // AoT
-      // new NormalModuleReplacementPlugin(
-      //   /@angular(\\|\/)upgrade/,
-      //   helpers.root('config/empty.js')
-      // ),
-      // new NormalModuleReplacementPlugin(
-      //   /@angular(\\|\/)compiler/,
-      //   helpers.root('config/empty.js')
-      // ),
-      // new NormalModuleReplacementPlugin(
-      //   /@angular(\\|\/)platform-browser-dynamic/,
-      //   helpers.root('config/empty.js')
-      // ),
-      // new NormalModuleReplacementPlugin(
-      //   /dom(\\|\/)debug(\\|\/)ng_probe/,
-      //   helpers.root('config/empty.js')
-      // ),
-      // new NormalModuleReplacementPlugin(
-      //   /dom(\\|\/)debug(\\|\/)by/,
-      //   helpers.root('config/empty.js')
-      // ),
-      // new NormalModuleReplacementPlugin(
-      //   /src(\\|\/)debug(\\|\/)debug_node/,
-      //   helpers.root('config/empty.js')
-      // ),
-      // new NormalModuleReplacementPlugin(
-      //   /src(\\|\/)debug(\\|\/)debug_renderer/,
-      //   helpers.root('config/empty.js')
-      // ),
+      // new IgnorePlugin(/angular2-hmr/),
 
       /**
        * Plugin: CompressionPlugin
@@ -280,6 +220,23 @@ module.exports = function (env) {
         minimize: true,
         debug: false,
         options: {
+          context: helpers.root('src'),
+          output: {
+            path: helpers.root('dist')
+          },
+
+          /**
+           * Static analysis linter for TypeScript advanced options configuration
+           * Description: An extensible linter for the TypeScript language.
+           *
+           * See: https://github.com/wbuchwalter/tslint-loader
+           */
+          tslint: {
+            emitErrors: true,
+            failOnHint: true,
+            resourcePath: 'src'
+          },
+
 
           /**
            * Html loader advanced options
@@ -301,17 +258,6 @@ module.exports = function (env) {
 
         }
       }),
-
-      /**
-       * Plugin: BundleAnalyzerPlugin
-       * Description: Webpack plugin and CLI utility that represents
-       * bundle content as convenient interactive zoomable treemap
-       *
-       * `npm run build:prod -- --env.analyze` to use
-       *
-       * See: https://github.com/th0r/webpack-bundle-analyzer
-       */
-
     ],
 
     /*
@@ -330,4 +276,4 @@ module.exports = function (env) {
     }
 
   });
-}
+};

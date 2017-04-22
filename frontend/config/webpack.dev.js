@@ -1,7 +1,3 @@
-/**
- * @author: @AngularClass
- */
-
 const helpers = require('./helpers');
 const webpackMerge = require('webpack-merge'); // used to merge webpack configs
 const webpackMergeDll = webpackMerge.strategy({plugins: 'replace'});
@@ -20,7 +16,7 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const HMR = helpers.hasProcessFlag('hot');
 const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   host: HOST,
@@ -28,7 +24,6 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   ENV: ENV,
   HMR: HMR
 });
-
 
 const DllBundlesPlugin = require('webpack-dll-bundles-plugin').DllBundlesPlugin;
 
@@ -89,48 +84,6 @@ module.exports = function (options) {
       libraryTarget: 'var',
     },
 
-    module: {
-
-      rules: [
-       {
-         test: /\.ts$/,
-         use: [
-           {
-             loader: 'tslint-loader',
-             options: {
-               configFile: 'tslint.json'
-             }
-           }
-         ],
-         exclude: [/\.(spec|e2e)\.ts$/]
-       },
-
-        /*
-         * css loader support for *.css files (styles directory only)
-         * Loads external css styles into the DOM, supports HMR
-         *
-         */
-        {
-          test: /\.css$/,
-          use: ['style-loader', 'css-loader'],
-          include: [helpers.root('src', 'styles')]
-        },
-
-        /*
-         * sass loader support for *.scss files (styles directory only)
-         * Loads external sass styles into the DOM, supports HMR
-         *
-         */
-        {
-          test: /\.scss$/,
-          use: ['style-loader', 'css-loader', 'sass-loader'],
-          include: [helpers.root('src', 'styles')]
-        },
-
-      ]
-
-    },
-
     plugins: [
 
       /**
@@ -165,6 +118,7 @@ module.exports = function (options) {
               name: 'zone.js',
               path: 'zone.js/dist/long-stack-trace-zone.js'
             },
+            'ts-helpers',
           ],
           vendor: [
             '@angular/platform-browser',
@@ -214,10 +168,24 @@ module.exports = function (options) {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
+          context: helpers.root('src'),
+          output: {
+            path: helpers.root('dist')
+          },
 
+          /**
+           * Static analysis linter for TypeScript advanced options configuration
+           * Description: An extensible linter for the TypeScript language.
+           *
+           * See: https://github.com/wbuchwalter/tslint-loader
+           */
+          tslint: {
+            emitErrors: false,
+            failOnHint: false,
+            resourcePath: 'src'
+          }
         }
-      }),
-
+      })
     ],
 
     /**
@@ -231,7 +199,9 @@ module.exports = function (options) {
     devServer: {
       port: METADATA.port,
       host: METADATA.host,
-      historyApiFallback: true,
+      historyApiFallback: {
+        index: '/index.html'
+      },
       watchOptions: {
         aggregateTimeout: 300,
         poll: 1000
@@ -254,4 +224,4 @@ module.exports = function (options) {
     }
 
   });
-}
+};
